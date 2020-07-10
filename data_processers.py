@@ -5,13 +5,12 @@ from sklearn.preprocessing import Binarizer ,LabelEncoder
 from sklearn.preprocessing import LabelEncoder,MinMaxScaler,StandardScaler
 from sklearn.impute import SimpleImputer
 
-
 def clean_header(df):
-	"""
+    """
 	This functions removes weird characters and spaces from column names, while keeping everything lower case
 	"""
     df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
-
+    return df
 
 def get_date_int(df, date_column):
 	year = df[date_column].dt.year
@@ -36,27 +35,26 @@ def calculate_time_difference(df, date_col2, date_col1):
 	df['first_group'] = years_diff * 52 + weeks_diff + 1
 	df['second_group'] = years_diff * 12 + months_diff + 1
 
-def mass_edit(file_prefix, folder_path=''):
+def mass_edit(file_prefix, folder_path='',col_to_change=None,operation=None):
     """
     file_prefix: string that defines new file name
     folder_path: no need to declare it. string copied from file explorer to the folder where the files are
 	"""
     if folder_path == '':
-        folder_path = input('Please enter the path where the CSV files are:\n')
+        folder_path = input('Please enter path to CSV files:\n')
     folder_path = folder_path.replace("\\","/")
     if folder_path[:-1] != "/":
         folder_path = folder_path + "/"
-		
-	file_list = glob.glob(folder_path + '*.csv')
-
+    file_list = glob.glob(folder_path + '*.csv')
 	for file in file_list:
-		name_pos = file.rfind('\\')
+        name_pos = file.rfind('\\')
 		data = pd.read_csv(file)
 		# changes go here!!
-		data['seniority'] = data['seniority'] + 1 #in this case, i just needed to add 1 to this column in each file
+		data[col_to_change] = data[col_to_change] + operation 
 		# until here!!
 		data.to_csv(folder_path + file[name_pos+1:], index=False) #saving the file again with same name
 		print(file+' ready!!')
+    return None
 
 # -------------------------Missing values----------------------------
 def check_nulls(df):
@@ -109,7 +107,7 @@ def remove_null_values(df,threshold:int=0.8):
   df.fillna(0,inplace=True)
 
 imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
-imp_mean.fit(df)from sklearn.ifrom sklearn.impute import SimpleImputermpute import SimpleImputer
+imp_mean.fit(df)
 
 ###-------------------- Outliers-----------------------------------------------
 
@@ -128,6 +126,7 @@ def check_outliers(df):
 
 
 # separate the num columns and cat data columns
+# TODO
 X_cols = X.columns
 num_cols = X.select_dtypes(exclude=['object','category']).columns
 cat_cols = [i for i in X_cols if i not in X[num_cols].columns]
@@ -142,8 +141,9 @@ def removing_outliers(dataframe):
             dataframe[col] = winsorize(dataframe[col], limits=[0.1, 0.1],inclusive=(True, True))
     
     return dataframe
-
-dataframe[col_name].map("current": 'new', fem.': "female"})
+def rename_column_variables(dataframe,col_name):
+    dataframe[col_name].map({"current_first": "new_first", "current_second": "new_second"})
+    return dataframe
 
 
 #transform categorical features into numerical (ordinal) features:
