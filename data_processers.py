@@ -151,17 +151,6 @@ def check_outliers(df):
             )
     return outliers
 
-
-# separate the num columns and cat data columns
-# TODO
-def get_categorical_columns(df):
-    num_cols = df.select_dtypes(exclude=["object", "category"]).columns
-    cat_cols = [i for i in df.columns if i not in df[num_cols].columns]
-    for i in cat_cols:
-        df[i] = df[i].astype("category")
-    return cat_cols
-
-
 # function for removing outliers
 def removing_outliers(dataframe):
     cols = list(dataframe)
@@ -172,6 +161,16 @@ def removing_outliers(dataframe):
             )
 
     return dataframe
+
+# separate the num columns and cat data columns
+# TODO
+def get_categorical_columns(df):
+    num_cols = df.select_dtypes(exclude=["object", "category"]).columns
+    cat_cols = [i for i in df.columns if i not in df[num_cols].columns]
+    for i in cat_cols:
+        df[i] = df[i].astype("category")
+    return cat_cols
+
 
 
 def rename_column_variables(dataframe, col_name):
