@@ -17,3 +17,10 @@ def simplify_column_name(df, old_name, new_name):
         re.sub(f"^{old_name}", f"{new_name}", x) for x in df.columns
     ]
     return df.columns
+
+def filter_features(features_df,features_to_exclude):
+  exclude_list = []
+  for i in features_to_exclude:
+    feature_cols = features_df.filter(regex=i,axis=1).columns.to_list()
+    exclude_list.extend(feature_cols)
+  return exclude_list
