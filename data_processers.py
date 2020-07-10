@@ -128,9 +128,8 @@ def impute_mean(df):
     imp_mean.fit(df)
     return df
 
+
 ###-------------------- Outliers-----------------------------------------------
-
-
 def check_outliers(df):
     col = list(df)
     outliers = pd.DataFrame(columns=["columns", "Outliers"])
@@ -155,11 +154,13 @@ def check_outliers(df):
 
 # separate the num columns and cat data columns
 # TODO
-X_cols = X.columns
-num_cols = X.select_dtypes(exclude=["object", "category"]).columns
-cat_cols = [i for i in X_cols if i not in X[num_cols].columns]
-for i in cat_cols:
-    X[i] = X[i].astype("category")
+def get_categorical_columns(df):
+    num_cols = df.select_dtypes(exclude=["object", "category"]).columns
+    cat_cols = [i for i in df.columns if i not in df[num_cols].columns]
+    for i in cat_cols:
+        df[i] = df[i].astype("category")
+    return cat_cols
+
 
 # function for removing outliers
 def removing_outliers(dataframe):
