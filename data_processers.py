@@ -123,8 +123,10 @@ def remove_null_values(df, threshold: int = 0.8):
     df.fillna(0, inplace=True)
 
 
-imp_mean = SimpleImputer(missing_values=np.nan, strategy="mean")
-imp_mean.fit(df)
+def impute_mean(df):
+    imp_mean = SimpleImputer(missing_values=np.nan, strategy="mean")
+    imp_mean.fit(df)
+    return df
 
 ###-------------------- Outliers-----------------------------------------------
 
