@@ -70,11 +70,9 @@ def calculate_time_difference(df, date_col2, date_col1):
 #         return None
 
 # -------------------------Missing values----------------------------
-def check_nulls_with_tukey(df):
+def table_percent_nulls_(df):
     """
-    Takes df
-    Checks nulls using Tukey's method 
-    Reference: https://www.stat.cmu.edu/~cshalizi/statcomp/13/labs/05/lab-05.pdf
+    Create table showing percent null values if columns of dataframe
     """
     if df.isnull().sum().sum() > 0:
         mask_total = df.isnull().sum().sort_values(ascending=False)
@@ -127,25 +125,24 @@ def impute_mean(df):
 
 
 ###-------------------- Outliers-----------------------------------------------
-def check_outliers(df):
+def check_outliers_iqr(df):
+    """
+    Takes df with continous variables,
+    Checks nulls using Tukey's method 
+    Reference: https://www.kdnuggets.com/2017/01/3-methods-deal-outliers.html
+    """
     col = list(df)
     outliers = pd.DataFrame(columns=["columns", "Outliers"])
-
     for column in col:
         if column in df.select_dtypes(include=np.number).columns:
+            #TODO: check if variables are continuous and normally distributed
             q1 = df[column].quantile(0.25)
             q3 = df[column].quantile(0.75)
             below = q1 - (1.5 * q3 - q1)
             above = q3 + (1.5 * q3 - q1)
             outliers = outliers.append(
-                {
-                    "columns": column,
-                    "Outliers": df.loc[
-                        (df[column] < below) | (df[column] > above)
-                    ].shape[0],
-                },
-                ignore_index=True,
-            )
+                {"columns": column,"outliers": df.loc[(df[column] < below) | (df[column] > above)].shape[0],},
+                ignore_index=True,)
     return outliers
 
 
