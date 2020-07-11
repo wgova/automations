@@ -70,20 +70,18 @@ def calculate_time_difference(df, date_col2, date_col1):
 #         return None
 
 # -------------------------Missing values----------------------------
-def check_nulls(df):
+def check_nulls_by_iqr(df):
     """
     Takes df
-    Checks nulls
+    Checks nulls using Tukey's method 
+    Reference: https://www.stat.cmu.edu/~cshalizi/statcomp/13/labs/05/lab-05.pdf
     """
     if df.isnull().sum().sum() > 0:
         mask_total = df.isnull().sum().sort_values(ascending=False)
         total = mask_total[mask_total > 0]
-
         mask_percent = df.isnull().mean().sort_values(ascending=False)
-        percent = mask_percent[mask_percent > 0]
-
+        percent = 100*mask_percent[mask_percent > 0]
         missing_data = pd.concat([total, percent], axis=1, keys=["Total", "Percent"])
-
         print(f"Total and Percentage of NaN:\n {missing_data}")
     else:
         print("No NaN found.")
