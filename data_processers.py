@@ -78,7 +78,7 @@ def table_percent_nulls_(df):
         mask_total = df.isnull().sum().sort_values(ascending=False)
         total = mask_total[mask_total > 0]
         mask_percent = df.isnull().mean().sort_values(ascending=False)
-        percent = 100*mask_percent[mask_percent > 0]
+        percent = 100 * mask_percent[mask_percent > 0]
         missing_data = pd.concat([total, percent], axis=1, keys=["Total", "Percent"])
         print(f"Total and Percentage of NaN:\n {missing_data}")
     else:
@@ -135,14 +135,20 @@ def check_outliers_iqr(df):
     outliers = pd.DataFrame(columns=["columns", "Outliers"])
     for column in col:
         if column in df.select_dtypes(include=np.number).columns:
-            #TODO: check if variables are continuous and normally distributed
+            # TODO: check if variables are continuous and normally distributed
             q1 = df[column].quantile(0.25)
             q3 = df[column].quantile(0.75)
             below = q1 - (1.5 * q3 - q1)
             above = q3 + (1.5 * q3 - q1)
             outliers = outliers.append(
-                {"columns": column,"outliers": df.loc[(df[column] < below) | (df[column] > above)].shape[0],},
-                ignore_index=True,)
+                {
+                    "columns": column,
+                    "outliers": df.loc[
+                        (df[column] < below) | (df[column] > above)
+                    ].shape[0],
+                },
+                ignore_index=True,
+            )
     return outliers
 
 
