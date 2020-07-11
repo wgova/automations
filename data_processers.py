@@ -70,7 +70,7 @@ def calculate_time_difference(df, date_col2, date_col1):
 #         return None
 
 # -------------------------Missing values----------------------------
-def check_nulls_by_iqr(df):
+def check_nulls_with_tukey(df):
     """
     Takes df
     Checks nulls using Tukey's method 
