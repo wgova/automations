@@ -1,7 +1,6 @@
 import scipy.stats as scipy
 from scipy import shapiro
 
-
 # normality test
 def shapiro_wilk_test(data,variable_to_test==None,alpha=0.5):
     if variable_to_test==None:
