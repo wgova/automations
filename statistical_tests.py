@@ -1,5 +1,5 @@
-import scipy.stats as scipy
-from scipy import shapiro
+from scipy.stats import shapiro, norm,kstest
+
 
 # normality test
 def shapiro_wilk_test(data, variable_to_test=None, alpha=0.5):
