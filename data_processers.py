@@ -89,7 +89,7 @@ def check_nulls(df):
         print("No NaN found.")
 
 
-def view_columns_w_many_nans(df, missing_percent):
+def check_null_columns(df, missing_percent):
     """
     Checks which columns have over specified percentage of missing values
     Takes df, missing percentage
@@ -98,20 +98,18 @@ def view_columns_w_many_nans(df, missing_percent):
     mask_percent = df.isnull().mean()
     series = mask_percent[mask_percent > missing_percent]
     columns = series.index.to_list()
-    print(columns)
     return columns
 
 
-def drop_columns_w_many_nans(df, missing_percent):
+def drop_null_columns(df, missing_percent):
     """
     Takes df, missing percentage
     Drops the columns whose missing value is bigger than missing percentage
     Returns df
     """
-    series = view_columns_w_many_nans(df, missing_percent=missing_percent)
+    series = check_null_columns(df, missing_percent=missing_percent)
     list_of_cols = series.index.to_list()
     df.drop(columns=list_of_cols)
-    print(list_of_cols)
     return df
 
 
@@ -121,6 +119,7 @@ def remove_null_values(df, threshold: int = 0.8):
     missing_features = pct_null[pct_null > threshold].index
     df.drop(missing_features, axis=1, inplace=True)
     df.fillna(0, inplace=True)
+    return df
 
 
 def impute_mean(df):
