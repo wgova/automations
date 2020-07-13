@@ -14,7 +14,7 @@ def shapiro_wilk_test(data,alpha=0.05):
     sw_test = []
     decision = []
     for col in data.columns:
-        stat, p = shapiro(data[col])
+        stat, p = shapiro(data[col].values)
         # print("Statistics=%.2f, p=%.2f" % (stat, p))
         statistic.append(stat)
         p_value.append(p)
