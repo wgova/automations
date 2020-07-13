@@ -22,7 +22,7 @@ def shapiro_wilk_test(data, variable_to_test=None, alpha=0.5):
             stat, p = shapiro(data)
         # print("Statistics=%.2f, p=%.2f" % (stat, p))
         stat.append(stat)
-        p_value.append()
+        p_value.append(p)
         # interpret
         alpha = 0.05
         if p > alpha:
