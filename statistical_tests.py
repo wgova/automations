@@ -1,4 +1,4 @@
-from scipy.stats import shapiro, norm,kstest
+from scipy.stats import shapiro, norm, kstest
 import pandas as pd
 
 
@@ -31,9 +31,13 @@ def shapiro_wilk_test(data, variable_to_test=None, alpha=0.5):
         else:
             decision.append("Not Gaussian")
         # print("Sample likely not Gaussian (reject H0)")
-    sw_test = pd.concat([stat.append(stat),p_value.append(),decision],
-    axis=1,keys=["statistic","p_value","Decision"])
-    return sw_test    
+    sw_test = pd.concat(
+        [stat.append(stat), p_value.append(), decision],
+        axis=1,
+        keys=["statistic", "p_value", "Decision"],
+    )
+    return sw_test
+
 
 # https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
 # https://towardsdatascience.com/6-ways-to-test-for-a-normal-distribution-which-one-to-use-9dcf47d8fa93
