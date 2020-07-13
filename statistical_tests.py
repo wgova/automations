@@ -3,7 +3,7 @@ import pandas as pd
 
 
 # normality test
-def shapiro_wilk_test(data,alpha=0.5):
+def shapiro_wilk_test(data,alpha=0.05):
     """
     H0: sample was drawn from a Gaussian distribution
     For a series x in data, calculates the Shapiro-Wilk statistic
@@ -14,7 +14,7 @@ def shapiro_wilk_test(data,alpha=0.5):
     sw_test = []
     decision = []
     for col in data.columns:
-        stat, p = shapiro(data.col)
+        stat, p = shapiro(data[col])
         # print("Statistics=%.2f, p=%.2f" % (stat, p))
         statistic.append(stat)
         p_value.append(p)
