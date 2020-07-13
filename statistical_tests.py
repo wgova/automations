@@ -9,14 +9,14 @@ def shapiro_wilk_test(data,alpha=0.5):
     For a series x in data, calculates the Shapiro-Wilk statistic
     Return: statistic and p-value
     """
-    stat = []
+    statistic = []
     p_value = []
     sw_test = []
     decision = []
     for col in data.columns:
         stat, p = shapiro(data[col])
         # print("Statistics=%.2f, p=%.2f" % (stat, p))
-        stat.append(stat)
+        statistic.append(stat)
         p_value.append(p)
         # interpret
         alpha = 0.05
@@ -27,7 +27,7 @@ def shapiro_wilk_test(data,alpha=0.5):
             decision.append("Not Gaussian")
         # print("Sample likely not Gaussian (reject H0)")
     sw_test = pd.concat(
-        [stat.append(stat), p_value.append(), decision],
+        [statistic, p_value, decision],
         axis=1,
         keys=["statistic", "p_value", "Decision"],
     )
