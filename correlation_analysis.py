@@ -7,7 +7,7 @@ def heatmap_numeric_w_dependent_variable(df, dependent_variable):
     Takes df, a dependant variable as str
     Returns a heatmap of all independent variables' correlations with dependent variable 
     """
-    plt.figure(figsize=(8, 10))
+    plt.figure(figsize=(10, 5.5))
     figure = sns.heatmap(
         df.corr()[[dependent_variable]].sort_values(by=dependent_variable),
         annot=True,
@@ -21,8 +21,10 @@ def heatmap_numeric_w_dependent_variable(df, dependent_variable):
 def plot_correlated_features(df, threshold=0.5):
     corr = df.corr()
     colour_limits = corr[corr >= threshold]
+    plt.figure(figsize=(10,5.5))
+    fig = sns.heatmap(colour_limits, cmap="Greens")
     fig.suptitle(f"Features with correlation above {threshold*100}%")
-    sns.heatmap(colour_limits, cmap="Greens")
+    
 
 
 def drop_correlated_pairs(df, threshold=0.5):
