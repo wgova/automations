@@ -26,7 +26,7 @@ def change_column_prefix(old_prefix,new_prefix=None,df):
     if new_prefix==None:
         [re.sub(prefix,"", x) for x in df.columns]
     else:
-        [re.sub(old_prefix,"new_prefix", x) for x in df.columns]
+        [re.sub(old_prefix,new_prefix, x) for x in df.columns]
     return df
 
 
