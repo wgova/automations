@@ -230,6 +230,14 @@ def transform_categorical_to_numercial(df, categorical_numerical_mapping):
     return new_df
 
 
+def scale_features(df):
+    scaler = StandardScaler()
+    scaled_df = pd.DataFrame(
+        scaler.fit_transform(df), columns=df.columns, index=df.index
+    )
+    return scaled_df
+
+
 # Inspired by:
 # https://towardsdatascience.com/creating-python-functions-for-exploratory-data-analysis-and-data-cleaning-2c462961bd71
 # https://towardsdatascience.com/automate-boring-tasks-with-your-own-functions-a32785437179
