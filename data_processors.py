@@ -9,14 +9,16 @@ from sklearn.impute import SimpleImputer
 
 def clean_header(df):
     """
-	This functions removes weird characters and spaces from column names, while keeping everything lower case
+	Removes name spaces, bracketscharacters and spaces from column names 
+    while keeping everything lower case
 	"""
-    df.columns = (
-        df.columns.str.strip()
+    df.columns = (df.columns.str.strip()
         .str.lower()
         .str.replace(" ", "_")
         .str.replace("(", "")
         .str.replace(")", "")
+        .str.replace('"','')
+        .str.replace("'","")
     )
     return df
 
