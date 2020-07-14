@@ -1,4 +1,5 @@
 import glob
+import re
 import pandas as pd
 import numpy as np
 from scipy.stats.mstats import winsorize
@@ -10,25 +11,26 @@ from sklearn.impute import SimpleImputer
 def clean_header(df):
     """
 	Removes name spaces, bracketscharacters and spaces from column names 
-    while keeping everything lower case
+    Makes all header names lower case
 	"""
-    df.columns = (df.columns.str.strip()
+    df.columns = (
+        df.columns.str.strip()
         .str.lower()
         .str.replace(" ", "_")
         .str.replace("(", "")
         .str.replace(")", "")
-        .str.replace('"','')
-        .str.replace("'","")
+        .str.replace('"', "")
+        .str.replace("'", "")
     )
     return df
 
-def change_column_prefix(old_prefix,new_prefix=None,df):
-    if new_prefix==None:
-        [re.sub(prefix,"", x) for x in df.columns]
-    else:
-        [re.sub(old_prefix,new_prefix, x) for x in df.columns]
-    return df
 
+def change_column_prefix(df, old_prefix, new_prefix=None):
+    if new_prefix == None:
+        [re.sub(old_prefix, "", x) for x in df.columns]
+    else:
+        [re.sub(old_prefix, new_prefix, x) for x in df.columns]
+    return df
 
 
 def simplify_column_name(df, old_name, new_name):
@@ -36,6 +38,7 @@ def simplify_column_name(df, old_name, new_name):
         re.sub(f"^{old_name}", f"{new_name}", x) for x in df.columns
     ]
     return df.columns
+
 
 def get_date_int(df, date_column):
     year = df[date_column].dt.year
