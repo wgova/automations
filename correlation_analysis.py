@@ -1,5 +1,6 @@
 ﻿import seaborn as sns
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # ----------------------- Correlation analyses-------------------------------------------
 def heatmap_numeric_w_dependent_variable(df, dependent_variable):
