@@ -21,10 +21,9 @@ def heatmap_numeric_w_dependent_variable(df, dependent_variable):
 def plot_correlated_features(df, threshold=0.5):
     corr = df.corr()
     colour_limits = corr[corr >= threshold]
-    plt.figure(figsize=(10,5.5))
+    plt.figure(figsize=(10, 5.5))
     fig = sns.heatmap(colour_limits, cmap="Greens")
     fig.suptitle(f"Features with correlation above {threshold*100}%")
-    
 
 
 def drop_correlated_pairs(df, threshold=0.5):
