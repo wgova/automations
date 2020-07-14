@@ -24,7 +24,7 @@ def plot_correlated_features(df, threshold=0.5):
     sns.heatmap(colour_limits, cmap="Greens")
 
 
-def drop_one_from_correlated_pairs(df, threshold=0.5):
+def drop_correlated_pairs(df, threshold=0.5):
     corr = df.corr().abs()
     corr_array = corr.unstack()
     sorted_corr_array = corr_array.sort_values(

@@ -20,6 +20,20 @@ def clean_header(df):
     )
     return df
 
+def change_column_prefix(old_prefix,new_prefix=None,df):
+    if new_prefix==None:
+        [re.sub(prefix,"", x) for x in df.columns]
+    else:
+        [re.sub(old_prefix,"new_prefix", x) for x in df.columns]
+    return df
+
+
+
+def simplify_column_name(df, old_name, new_name):
+    df.columns = df.columns = [
+        re.sub(f"^{old_name}", f"{new_name}", x) for x in df.columns
+    ]
+    return df.columns
 
 def get_date_int(df, date_column):
     year = df[date_column].dt.year
@@ -62,11 +76,8 @@ def calculate_time_difference(df, date_col2, date_col1):
 # 	for file in file_list:
 #         name_pos = file.rfind('\\')
 # 		data = pd.read_csv(file)
-# 		# changes go here!!
-# 		data[col_to_change] = data[col_to_change] + operation
-# 		# until here!!
-# 		data.to_csv(folder_path + file[name_pos+1:]+file_prefix, index=False) #saving the file again with same name
-# 		print(file+' ready!!')
+# 		data.to_csv(os.path.join(folder_path,file[name_pos+1:],file_prefix), index=False) #saving the file again with same name
+# 		print(f'{file} ready!!')
 #         return None
 
 # -------------------------Missing values----------------------------
