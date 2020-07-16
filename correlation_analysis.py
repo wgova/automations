@@ -23,9 +23,7 @@ def plot_correlated_features(df, threshold=0.5):
     colour_limits = corr[corr >= threshold]
     plt.figure(figsize=(10, 5.5))
     sns.heatmap(colour_limits, cmap="Greens")
-    plt.title(f"Features with correlation above {threshold*100}%")
-
-
+    
 def drop_correlated_pairs(df, threshold=0.5):
     corr = df.corr().abs()
     corr_array = corr.unstack()
