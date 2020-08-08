@@ -6,7 +6,6 @@ from sklearn.cluster import AgglomerativeClustering, KMeans, SpectralClustering,
 from scipy.cluster.hierarchy import fcluster, ward, dendrogram
 from scipy.cluster.vq import kmeans,vq
 from sklearn.metrics.cluster import homogeneity_score
-from scipy.cluster.hierarchy import dendrogram
 from sklearn.metrics import silhouette_samples,silhouette_score
 from sklearn.decomposition import PCA
 
@@ -78,7 +77,7 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     plt.show()
 
 
-def plot_kmeans_clusters(data_array, number_of_clusters, name_of_data: str):
+def plot_kmeans_clusters(data_array, number_of_clusters, name_of_data: str,path=PATH):
     # compute K-Means with k = number_of_clusters
     centroids, _ = kmeans(data_array, number_of_clusters)
     # assign each sample to a cluster
