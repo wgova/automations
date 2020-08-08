@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler, StandardScaler
 from sklearn.impute import SimpleImputer
 
 # test dataset
-data = pd.read_csv("sample_ts_data.csv")
+# data = pd.read_csv("sample_ts_data.csv")
 
 def clean_header(df):
     """
