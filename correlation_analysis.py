@@ -38,4 +38,8 @@ def drop_correlated_pairs(df, threshold=0.5):
     )
     collinear_array = sorted_corr[sorted_corr["score"] >= threshold]
     exclude_collinear_feats = collinear_array["feature_2"].values
+    # use correlations above 0.5 and p-values, prioritising p-values with statistical significance
     return exclude_collinear_feats
+
+# TODO
+# Augmented Dickey-Fuller
