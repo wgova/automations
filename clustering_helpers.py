@@ -1,3 +1,15 @@
+import re
+import pandas as pd
+import numpy as np
+from sklearn.cluster import AgglomerativeClustering, KMeans, SpectralClustering,DBSCAN
+from scipy.cluster.hierarchy import fcluster, ward, dendrogram
+from scipy.cluster.vq import kmeans,vq
+from sklearn.metrics.cluster import homogeneity_score
+from scipy.cluster.hierarchy import dendrogram
+from sklearn.metrics import silhouette_samples,\
+silhouette_score
+from sklearn.decomposition import PCA
+
 # Functions for clustering
 # given a linkage model, plot dendogram, with the colors indicated by the a cutoff point at which we define clusters
 # Example from https://scikit-learn.org/stable/auto_examples/cluster/plot_agglomerative_dendrogram.html#sphx-glr-auto-examples-cluster-plot-agglomerative-dendrogram-py

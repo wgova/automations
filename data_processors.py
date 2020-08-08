@@ -27,7 +27,7 @@ def clean_header(df):
     return df
 
 
-def change_column_prefix(df, old_prefix, new_prefix=None):
+def change_column_prefix(df, old_prefix="export_val__", new_prefix=None):
     if new_prefix == None:
         [re.sub(old_prefix, "", x) for x in df.columns]
     else:
