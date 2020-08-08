@@ -7,6 +7,8 @@ from sklearn.preprocessing import Binarizer, LabelEncoder
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler, StandardScaler
 from sklearn.impute import SimpleImputer
 
+# test dataset
+data = pd.read_csv("sample_ts_data.csv")
 
 def clean_header(df):
     """
@@ -26,17 +28,15 @@ def clean_header(df):
 
 
 def change_column_prefix(df, old_prefix, new_prefix=None):
-    # if new_prefix == None:
+    if new_prefix == None:
     [re.sub(old_prefix, "", x) for x in df.columns]
-    # else:
-        # [re.sub(old_prefix, new_prefix, x) for x in df.columns]
+    else:
+        [re.sub(old_prefix, new_prefix, x) for x in df.columns]
     return df
 
 
 def simplify_column_name(df, old_name, new_name):
-    df.columns = df.columns = [
-        re.sub(f"^{old_name}", f"{new_name}", x) for x in df.columns
-    ]
+    df.columns = df.columns = [re.sub(f"^{old_name}", f"{new_name}", x) for x in df.columns]
     return df.columns
 
 
