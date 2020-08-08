@@ -29,7 +29,7 @@ def clean_header(df):
 
 def change_column_prefix(df, old_prefix, new_prefix=None):
     if new_prefix == None:
-    [re.sub(old_prefix, "", x) for x in df.columns]
+        [re.sub(old_prefix, "", x) for x in df.columns]
     else:
         [re.sub(old_prefix, new_prefix, x) for x in df.columns]
     return df
