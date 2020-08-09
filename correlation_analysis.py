@@ -20,7 +20,7 @@ def heatmap_numeric_w_dependent_variable(df, dependent_variable):
     return figure
 
 
-def plot_correlated_features(df, threshold=0.5):
+def plot_correlated_features(df, threshold):
     corr = df.corr()
     colour_limits = corr[corr >= threshold]
     plt.figure(figsize=(10, 5.5))
