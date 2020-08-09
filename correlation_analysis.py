@@ -1,6 +1,7 @@
 ﻿import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+import statsmodels.formula.api as sm
 
 # ----------------------- Correlation analyses-------------------------------------------
 def heatmap_numeric_w_dependent_variable(df, dependent_variable):
@@ -43,6 +44,22 @@ def drop_correlated_pairs(df, threshold=0.5):
     # use correlations above 0.5 and p-values, prioritising p-values with statistical significance
     return exclude_collinear_feats
 
+selected_columns = selected_columns[1:].values
+def backwardElimination(x, Y, sl, columns):
+    numVars = len(x[0])
+    for i in range(0, numVars):
+        regressor_OLS = sm.OLS(Y, x).fit()
+        maxVar = max(regressor_OLS.pvalues).astype(float)
+        if maxVar > sl:
+            for j in range(0, numVars - i):
+                if (regressor_OLS.pvalues[j].astype(float) == maxVar):
+                    x = np.delete(x, j, 1)
+                    columns = np.delete(columns, j)
+                    
+    regressor_OLS.summary()
+    return x, columns
+SL = 0.05
+data_modeled, selected_columns = backwardElimination(data.iloc[:,1:].values, data.iloc[:,0].values, SL, selected_columns)
 
 # TODO
 # Augmented Dickey-Fuller
