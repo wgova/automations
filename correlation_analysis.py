@@ -28,7 +28,7 @@ def plot_correlated_features(df, threshold: float):
     plt.title(f"Features with correlation above {threshold*100}%")
 
 # Also try ideas from https://towardsdatascience.com/feature-selection-correlation-and-p-value-da8921bfb3cf
-def drop_correlated_pairs(df, threshold=0.5):
+def drop_correlated_pairs(df, threshold: float):
     corr = df.corr().abs()
     corr_array = corr.unstack()
     sorted_corr_array = corr_array.sort_values(
