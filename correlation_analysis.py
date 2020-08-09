@@ -29,8 +29,8 @@ def plot_correlated_features(df, threshold: float):
 
 # Also try ideas from https://towardsdatascience.com/feature-selection-correlation-and-p-value-da8921bfb3cf
 def drop_correlated_pairs(df, threshold: float):
-    corr_array  = df.corr().abs()\
-        .unstack()
+    corr_array  = df.corr().abs().\
+        unstack()
     sorted_corr_array = corr_array.\
         sort_values(kind="quicksort", ascending=False).drop_duplicates()
     sorted_corr = pd.DataFrame(sorted_corr_array).\
