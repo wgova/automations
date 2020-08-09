@@ -12,9 +12,9 @@ def select_features_df(df, features_list):
     return feats_df
 
 
-def filter_features(features_df, features_to_exclude):
-    exclude_list = []
-    for i in features_to_exclude:
+def filter_features(features_df, features_to_find):
+    feature_list = []
+    for i in features_to_find:
         feature_cols = features_df.filter(regex=i, axis=1).columns.to_list()
-        exclude_list.extend(feature_cols)
-    return exclude_list
+        feature_list.extend(feature_cols)
+    return feature_list

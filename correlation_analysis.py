@@ -27,7 +27,7 @@ def plot_correlated_features(df, threshold=0.5):
     sns.heatmap(colour_limits, cmap="Greens")
     plt.title(f"Features with correlation above {threshold*100}%")
 
-
+# Also try ideas from https://towardsdatascience.com/feature-selection-correlation-and-p-value-da8921bfb3cf
 def drop_correlated_pairs(df, threshold=0.5):
     corr = df.corr().abs()
     corr_array = corr.unstack()
@@ -41,7 +41,7 @@ def drop_correlated_pairs(df, threshold=0.5):
     )
     collinear_array = sorted_corr[sorted_corr["score"] >= threshold]
     exclude_collinear_feats = collinear_array["feature_2"].values
-    # use correlations above 0.5 and p-values, prioritising p-values with statistical significance
+    # use correlations above 0.5
     return exclude_collinear_feats
 
 # selected_columns = selected_columns[1:].values
