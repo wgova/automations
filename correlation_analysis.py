@@ -44,7 +44,7 @@ def drop_correlated_pairs(df, threshold=0.5):
     # use correlations above 0.5 and p-values, prioritising p-values with statistical significance
     return exclude_collinear_feats
 
-selected_columns = selected_columns[1:].values
+# selected_columns = selected_columns[1:].values
 def backwardElimination(x, Y, sl, columns):
     numVars = len(x[0])
     for i in range(0, numVars):
@@ -58,8 +58,9 @@ def backwardElimination(x, Y, sl, columns):
                     
     regressor_OLS.summary()
     return x, columns
-SL = 0.05
-data_modeled, selected_columns = backwardElimination(data.iloc[:,1:].values, data.iloc[:,0].values, SL, selected_columns)
+# Example usage:
+# SL = 0.05
+# data_modeled, selected_columns = backwardElimination(data.iloc[:,1:].values, data.iloc[:,0].values, SL, selected_columns)
 
 # TODO
 # Augmented Dickey-Fuller
