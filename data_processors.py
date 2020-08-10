@@ -190,7 +190,7 @@ def remove_outliers_iqr(data):
         q3 = data[col].quantile(0.75)
         IQR = q3 - q1
         threshold = 1.5 * IQR
-        data = data[data[col].between((q1 - q3), (q3 + threshold))]
+        data[data[col].between((q1 - q3), (q3 + threshold))]
     return data
 
 
@@ -201,8 +201,8 @@ def outliers_zscore(data):
         mean = data[col].mean()
         stdev = data[col].std()
         data['col_zscores'] = (data[col] - mean) / stdev  # compute zscore
-        data = data[abs(data[col_zscores]) <= threshold]  # remove outliers
-        data = data.drop(col_zscores, axis=1)  # drop zscore columns
+        data = data[abs(data['col_zscores']) <= threshold]  # remove outliers
+        data.drop(['col_zscores'], axis=1)  # drop zscore columns
     return data
 
 
