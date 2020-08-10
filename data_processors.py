@@ -202,7 +202,7 @@ def outliers_zscore(data):
         stdev = data[col].std()
         data['col_zscores'] = (data[col] - mean) / stdev  # compute zscore
         data = data[abs(data['col_zscores']) <= threshold]  # remove outliers
-        data.drop(['col_zscores'], axis=1)  # drop zscore columns
+        data.drop(['col_zscores'], axis=1,inplace=True)  # drop zscore columns
     return data
 
 
