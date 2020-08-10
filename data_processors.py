@@ -10,6 +10,7 @@ from sklearn.impute import SimpleImputer
 # test dataset
 # data = pd.read_csv("sample_ts_data.csv")
 
+
 def clean_header(df):
     """
 	Removes name spaces, bracketscharacters and spaces from column names 
@@ -36,7 +37,9 @@ def change_column_prefix(df, old_prefix="export_val__", new_prefix=None):
 
 
 def simplify_column_name(df, old_name, new_name):
-    df.columns = df.columns = [re.sub(f"^{old_name}", f"{new_name}", x) for x in df.columns]
+    df.columns = df.columns = [
+        re.sub(f"^{old_name}", f"{new_name}", x) for x in df.columns
+    ]
     return df.columns
 
 
@@ -179,15 +182,17 @@ def remove_outliers_winsorize(dataframe):
 
     return dataframe
 
+
 def remove_outliers_iqr(data):
-  cols = data.columns
-  for col in cols:
-    q1 = data[col].quantile(0.25)
-    q3 = data[col].quantile(0.75)
-    IQR = q3 - q1
-    threshold = 1.5 * IQR
-    data = data[data[col].between((q1 - q3), (q3 + threshold))]
-  return data
+    cols = data.columns
+    for col in cols:
+        q1 = data[col].quantile(0.25)
+        q3 = data[col].quantile(0.75)
+        IQR = q3 - q1
+        threshold = 1.5 * IQR
+        data = data[data[col].between((q1 - q3), (q3 + threshold))]
+    return data
+
 
 def outliers_zscore(data):
     cols = data.columns
@@ -195,10 +200,11 @@ def outliers_zscore(data):
         threshold = 3
         mean = data[col].mean()
         stdev = data[col].std()
-        data[col_zscores] = (data[col] - mean) / stdev # compute zscore
-        data = data[abs(data[col_zscores])<=threshold] # remove outliers
-        data = data.drop(col_zscores, axis=1) # drop zscore columns
-    return data 
+        data[col_zscores] = (data[col] - mean) / stdev  # compute zscore
+        data = data[abs(data[col_zscores]) <= threshold]  # remove outliers
+        data = data.drop(col_zscores, axis=1)  # drop zscore columns
+    return data
+
 
 # separate the num columns and cat data columns
 # TODO

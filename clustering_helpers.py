@@ -2,11 +2,11 @@ import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.cluster import AgglomerativeClustering, KMeans, SpectralClustering,DBSCAN
+from sklearn.cluster import AgglomerativeClustering, KMeans, SpectralClustering, DBSCAN
 from scipy.cluster.hierarchy import fcluster, ward, dendrogram
-from scipy.cluster.vq import kmeans,vq
+from scipy.cluster.vq import kmeans, vq
 from sklearn.metrics.cluster import homogeneity_score
-from sklearn.metrics import silhouette_samples,silhouette_score
+from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.decomposition import PCA
 
 # Functions for clustering
@@ -14,7 +14,8 @@ from sklearn.decomposition import PCA
 # Example from https://scikit-learn.org/stable/auto_examples/cluster/plot_agglomerative_dendrogram.html#sphx-glr-auto-examples-cluster-plot-agglomerative-dendrogram-py
 def plot_dendrogram(raw_ts_dataframe, name_of_dataset, **kwargs):
     model = AgglomerativeClustering(n_clusters=None, distance_threshold=0).fit(
-        raw_ts_dataframe.T.values)
+        raw_ts_dataframe.T.values
+    )
     # create the counts of samples under each node
     counts = np.zeros(model.children_.shape[0])
     n_samples = len(model.labels_)
@@ -36,6 +37,7 @@ def plot_dendrogram(raw_ts_dataframe, name_of_dataset, **kwargs):
     dendrogram(linkage_matrix, **kwargs)
     plt.savefig(f"hierarchical_{name_of_dataset}")
     return linkage_matrix
+
 
 def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_clusters):
     range_n_clusters = range(2, max_clusters)
@@ -76,7 +78,10 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     plt.legend()
     plt.show()
 
-def plot_kmeans_clusters(data_array, number_of_clusters, name_of_data: str,path_to_images):
+
+def plot_kmeans_clusters(
+    data_array, number_of_clusters, name_of_data: str, path_to_images
+):
     # compute K-Means with k = number_of_clusters
     centroids, _ = kmeans(data_array, number_of_clusters)
     # assign each sample to a cluster
