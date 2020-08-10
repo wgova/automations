@@ -169,8 +169,8 @@ def check_outliers_iqr(df):
 
 
 # function for removing outliers
-def removing_outliers(dataframe):
-    cols = list(dataframe)
+def remove_outliers_winsorize(dataframe):
+    cols = dataframe.columns
     for col in cols:
         if col in dataframe.select_dtypes(include=np.number).columns:
             dataframe[col] = winsorize(
@@ -179,6 +179,15 @@ def removing_outliers(dataframe):
 
     return dataframe
 
+def remove_outliers_iqr(data):
+  cols = data.columns
+  for col in cols:
+    q1 = data[col].quantile(0.25)
+    q3 = data[col].quantile(0.75)
+    IQR = q3 - q1
+    threshold = 1.5 * IQR
+    data[data[col].between((q1 - q3), (q3 + threshold))]
+  return data[data[col].between((q1 - q3), (q3 + threshold))]
 
 # separate the num columns and cat data columns
 # TODO
