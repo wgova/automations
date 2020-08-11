@@ -98,6 +98,6 @@ def plot_kmeans_clusters(
             label=f"cluster {cluster}",
         )
         plt.legend()
-    plt.savefig(f"{path_to_images}/k_means_{name_of_data}")
+    plt.savefig(f"{path_to_images}/{name_of_data}")
     plt.show()
     return idx
