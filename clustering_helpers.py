@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import AgglomerativeClustering, KMeans, SpectralClustering, DBSCAN
+from yellowbrick.cluster import KElbowVisualizer
 from scipy.cluster.hierarchy import fcluster, ward, dendrogram
 from scipy.cluster.vq import kmeans, vq
 from sklearn.metrics.cluster import homogeneity_score
@@ -79,9 +80,15 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     plt.show()
 
 
-def plot_kmeans_clusters(
-    data_array, number_of_clusters, name_of_data: str, path_to_images
-):
+def get_elbow_value(data):
+    kelbow_visualizer = KElbowVisualizer(
+        model=KMeans(random_state=42), k=(2, 15), timings=False, locate_elbow=True
+    ).fit(data)
+    return kelbow_visualizer.elbow_value_
+
+
+def plot_kmeans_clusters(data_array, name_of_data: str, path_to_images):
+    number_of_clusters = get_elbow_value(data_array)
     # compute K-Means with k = number_of_clusters
     centroids, _ = kmeans(data_array, number_of_clusters)
     # assign each sample to a cluster

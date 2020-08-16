@@ -46,16 +46,17 @@ def drop_correlated_pairs(df, threshold: float):
     # bug: excluding singular pairs with r=1
     return exclude_collinear_feats
 
-def find_correlated_columns(df,threshold:float):
-  corr = df.corr()
-  columns = np.full((corr.shape[0],), True, dtype=bool)
-  for i in range(corr.shape[0]):
-    for j in range(i+1, corr.shape[0]):
-        if corr.iloc[i,j] >= threshold:
-            if columns[j]:
-                columns[j] = False
-  return df.columns[columns]
- 
+
+def find_correlated_columns(df, threshold: float):
+    corr = df.corr()
+    columns = np.full((corr.shape[0],), True, dtype=bool)
+    for i in range(corr.shape[0]):
+        for j in range(i + 1, corr.shape[0]):
+            if corr.iloc[i, j] >= threshold:
+                if columns[j]:
+                    columns[j] = False
+    return df.columns[columns]
+
 
 # selected_columns = selected_columns[1:].values
 def backwardElimination(x, Y, sl, columns):
