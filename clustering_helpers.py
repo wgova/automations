@@ -70,7 +70,7 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     plt.legend()
 
     fig.add_subplot(132)
-     fig.suptitle("KElbow method results")
+    fig.suptitle("KElbow method results")
     kelbow_visualizer = KElbowVisualizer(
         model=KMeans(random_state=42), k=(2, 15), timings=False, locate_elbow=True
     ).fit(data_array)
