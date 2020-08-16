@@ -64,7 +64,7 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     fig = plt.figure(figsize=(15, 5.5))
     fig.suptitle(f"K-means clusters for {name_of_data}", fontsize=16)
     fig.add_subplot(121)
-    plt.plot(range_n_clusters, elbow, "b-", label=f"{name_of_data} SSE")
+    plt.plot(range_n_clusters, elbow, "g-", label=f"{name_of_data} SSE")
     plt.xlabel("Cluster")
     plt.ylabel("Sum of squared error(SSE)")
     plt.legend()
