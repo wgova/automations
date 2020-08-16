@@ -63,13 +63,13 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
 
     fig = plt.figure(figsize=(10, 5.5))
     fig.suptitle(f"K-means clusters for {name_of_data}", fontsize=16)
-    fig.add_subplot(121)
+    fig.add_subplot(131)
     plt.plot(range_n_clusters, elbow, "b-", label=f"{name_of_data} SSE")
     plt.xlabel("Number of cluster")
     plt.ylabel("Sum of squared error(SSE)")
     plt.legend()
 
-    fig.add_subplot(122)
+    fig.add_subplot(132)
     fig.suptitle("Silhouette method results")
     plt.plot(
         range_n_clusters, s_score, "b-", label=f"{name_of_data} \n Silhouette Score"
@@ -77,18 +77,19 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     plt.xlabel("Number of cluster")
     plt.ylabel("Silhouette Score")
     plt.legend()
-    plt.show()
-
-
-def get_elbow_value(data):
+    
+    fig.add_subplot(132)
+    fig.suptitle("Silhouette method results")
     kelbow_visualizer = KElbowVisualizer(
         model=KMeans(random_state=42), k=(2, 15), timings=False, locate_elbow=True
-    ).fit(data)
+    ).fit(data_array)
+    plt.xlabel("Number of cluster")
+    plt.ylabel("Silhouette Score")
+    plt.show()
+
     return kelbow_visualizer.elbow_value_
 
-
-def plot_kmeans_clusters(data_array, name_of_data: str, path_to_images):
-    number_of_clusters = get_elbow_value(data_array)
+def plot_kmeans_clusters(data_array, number_of_clusters,name_of_data: str, path_to_images):
     # compute K-Means with k = number_of_clusters
     centroids, _ = kmeans(data_array, number_of_clusters)
     # assign each sample to a cluster
