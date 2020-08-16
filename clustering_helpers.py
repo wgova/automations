@@ -97,7 +97,7 @@ def plot_kmeans_clusters(data_array, name_of_data: str, path_to_images):
     fig, ax = plt.subplots(figsize=(10, 5.5))
     fig.suptitle(f"K-means clusters for {name_of_data}", fontsize=12)
     for cluster in range(number_of_clusters):
-        colours = ["ob", "ok", "or", "og", "om", "oc", "oy"]
+        colours = ["ob", "ok", "or", "og", "om", "oc", "oy","op","ov"]
         ax.plot(
             data_array[idx == cluster, 0],
             data_array[idx == cluster, 1],
