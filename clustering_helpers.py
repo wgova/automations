@@ -66,16 +66,12 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     fig.add_subplot(121)
     plt.plot(range_n_clusters, elbow, "g-", label=f"{name_of_data} SSE")
     plt.xlabel("Cluster")
-    plt.ylabel("Sum of squared error(SSE)")
-    plt.legend()
-
-    # fig.add_subplot(132)
-    # fig.suptitle("KElbow method results")
+    plt.ylabel("Sum of squared error(SSE) / Distortion")
+    
     kelbow_visualizer = KElbowVisualizer(
         model=KMeans(random_state=42), k=(2, 15), timings=False, locate_elbow=True
     ).fit(data_array)
-    # plt.xlabel("Cluster")
-    # plt.ylabel("Distortion")
+    plt.legend()
     
     fig.add_subplot(122)
     fig.suptitle("Silhouette method results")
