@@ -61,30 +61,30 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
             clusterer.inertia_
         )  # Inertia: Sum of distances of samples to their closest cluster center
 
-    fig = plt.figure(figsize=(10, 5.5))
+    fig = plt.figure(figsize=(15, 5.5))
     fig.suptitle(f"K-means clusters for {name_of_data}", fontsize=16)
     fig.add_subplot(131)
     plt.plot(range_n_clusters, elbow, "b-", label=f"{name_of_data} SSE")
-    plt.xlabel("Number of cluster")
+    plt.xlabel("Cluster")
     plt.ylabel("Sum of squared error(SSE)")
     plt.legend()
 
     fig.add_subplot(132)
+     fig.suptitle("KElbow method results")
+    kelbow_visualizer = KElbowVisualizer(
+        model=KMeans(random_state=42), k=(2, 15), timings=False, locate_elbow=True
+    ).fit(data_array)
+    plt.xlabel("Cluster")
+    plt.ylabel("Distortion")
+    
+    fig.add_subplot(133)
     fig.suptitle("Silhouette method results")
     plt.plot(
         range_n_clusters, s_score, "b-", label=f"{name_of_data} \n Silhouette Score"
     )
-    plt.xlabel("Number of cluster")
+    plt.xlabel("Cluster")
     plt.ylabel("Silhouette Score")
     plt.legend()
-    
-    fig.add_subplot(133)
-    fig.suptitle("Silhouette method results")
-    kelbow_visualizer = KElbowVisualizer(
-        model=KMeans(random_state=42), k=(2, 15), timings=False, locate_elbow=True
-    ).fit(data_array)
-    plt.xlabel("Number of cluster")
-    plt.ylabel("Silhouette Score")
     plt.show()
 
     return kelbow_visualizer.elbow_value_
