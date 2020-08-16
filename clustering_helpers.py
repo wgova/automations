@@ -78,7 +78,7 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     plt.ylabel("Silhouette Score")
     plt.legend()
     
-    fig.add_subplot(132)
+    fig.add_subplot(133)
     fig.suptitle("Silhouette method results")
     kelbow_visualizer = KElbowVisualizer(
         model=KMeans(random_state=42), k=(2, 15), timings=False, locate_elbow=True
