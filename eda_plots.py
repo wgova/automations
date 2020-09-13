@@ -37,3 +37,7 @@ for j in range(len(ax)):
 fig.suptitle("Categorical Features Overview", position=(0.5, 1.1), fontsize=20)
 fig.tight_layout()
 fig.show()
+
+def visualize_null_values():
+    sns.heatmap(df.isnull(),yticklabels=False)
+    plt.show()
