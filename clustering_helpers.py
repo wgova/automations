@@ -60,7 +60,6 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
         elbow.append(
             clusterer.inertia_
         )  # Inertia: Sum of distances of samples to their closest cluster center
-
     fig = plt.figure(figsize=(15, 5.5))
     fig.suptitle(f"K-means clusters for {name_of_data}", fontsize=16)
     fig.add_subplot(121)
@@ -70,9 +69,7 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     
     fig.add_subplot(122)
     fig.suptitle("Silhouette method results")
-    plt.plot(
-        range_n_clusters, s_score, "b-", label=f"{name_of_data} \n Silhouette Score"
-    )
+    plt.plot(range_n_clusters, s_score, "b-", label=f"{name_of_data} \n Silhouette Score")
     plt.xlabel("Cluster")
     plt.ylabel("Silhouette Score")
     plt.legend()
@@ -80,7 +77,7 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
 
 def plot_kmeans_clusters(data_array,number_of_clusters,name_of_data:str):
   # computing K-Means with K = number_of_clusters
-  centroids,_ = kmeans(data_array,number_of_clusters,random_state=42,thresh=1e-05)
+  centroids,_ = kmeans(data_array,number_of_clusters,random_state=42,thresh=1e-05,n_init=1)
   # assign each sample to a cluster
   idx,_ = vq(data_array,centroids)
   # some plotting using numpy's logical indexing
@@ -145,6 +142,6 @@ def get_clustered_features(product_name,df_features):
       col = cluster_features.columns[i]
       cluster_features[col].plot(kind='bar')
       plt.title(f"Features for {col}")
-      # plt.tight_layout()
+      plt.tight_layout()
   fig.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
   return country_cluster,cluster_features
