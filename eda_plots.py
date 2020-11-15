@@ -13,17 +13,18 @@ def histograms_numeric_columns(df, numerical_columns):
 
 
 # Plot multiple columns seaborn
-df = data[columns]
-n = len(df.columns)
-fig, ax = plt.subplots(1, n, figsize=(12, n * 2), sharex=True)
-for i in range(n):
-    plt.sca(ax[i])
-    col = df.columns[i]
-    sns.countplot(x=None, y=df[col].values, data=df)
-    plt.title(f"Title based on {col}")
+ def plot_multiple_columns(data):
+    df = data[columns]
+    n = len(df.columns)
+    fig, ax = plt.subplots(1, n, figsize=(12, n * 2), sharex=True)
+    for i in range(n):
+        plt.sca(ax[i])
+        col = df.columns[i]
+        sns.countplot(x=None, y=df[col].values, data=df)
+        plt.title(f"Title based on {col}")
 
-fig, ax = plt.subplots(2, 2, figsize=(12, 10))
-# jitter = [[False, 1], [0.5, 0.2]]
+    fig, ax = plt.subplots(2, 2, figsize=(12, 10))
+    # jitter = [[False, 1], [0.5, 0.2]]
 
 for j in range(len(ax)):
     for i in range(len(ax[j])):
