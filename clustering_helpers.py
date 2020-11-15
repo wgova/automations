@@ -91,7 +91,7 @@ def plot_kmeans_clusters(data_array,number_of_clusters,name_of_data:str):
   plt.show()
   return idx
 
-def get_clustered_features(product_name,df_features,experiment):
+def get_clustered_features(product_name,df_features,experiment,PATH):
   #product_name = 'all_products'
   # Reduce dimensions using PCA
   pca = PCA(n_components=2)
