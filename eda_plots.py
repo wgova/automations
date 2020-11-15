@@ -13,7 +13,7 @@ def histograms_numeric_columns(df, numerical_columns):
 
 
 # Plot multiple columns seaborn
- def plot_multiple_columns(data):
+def plot_multiple_columns(data):
     df = data[columns]
     n = len(df.columns)
     fig, ax = plt.subplots(1, n, figsize=(12, n * 2), sharex=True)
