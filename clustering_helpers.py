@@ -134,7 +134,7 @@ def get_clustered_features(product_name,df_features,experiment):
   clust.set_index('cluster',inplace=True)
   # x = clust.iloc[-1,:]
   cluster_features = clust.T
-  cluster_features.plot(kind='bar',title=f"Features for {col}")
+  cluster_features.plot(kind='bar',title=f"Features for clusters")
   #n = len(cluster_features.columns)
   #fig, ax = plt.subplots(n, 1, figsize=(10, n * 3), sharex=True,sharey=True)
   #for i in range(n):
