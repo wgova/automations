@@ -110,7 +110,7 @@ def get_clustered_features(product_name,df_features):
   pca_k_value = kelbow_visualizer.elbow_value_
   plt.title('Locating optimum number of clusters (k) using the elbow method')
   plt.legend()
-  plt.savefig(f"{PATH}/images/{experiment}_elbow")
+  #plt.savefig(f"{PATH}/images/{experiment}_elbow")
 
   clusters_features_uncorrelated = plot_kmeans_clusters(np.asarray(PCA_components),pca_k_value,f"{product_name}_{experiment}_pca_kmeans",f"{PATH}/images")
 
@@ -143,5 +143,5 @@ def get_clustered_features(product_name,df_features):
       cluster_features[col].plot(kind='bar')
       plt.title(f"Features for {col}")
       plt.tight_layout()
-  fig.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
+  #fig.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
   return country_cluster,cluster_features
