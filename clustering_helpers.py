@@ -78,7 +78,7 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
 
 def plot_kmeans_clusters(data_array,number_of_clusters,name_of_data:str):
   # computing K-Means with K = number_of_clusters
-  centroids,_ = kmeans(data_array,number_of_clusters,thresh=1e-05,n_init=1)
+  centroids,_ = kmeans(data_array,number_of_clusters,thresh=1e-05)
   # assign each sample to a cluster
   idx,_ = vq(data_array,centroids)
   # some plotting using numpy's logical indexing
