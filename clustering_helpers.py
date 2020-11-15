@@ -78,24 +78,73 @@ def plot_elbow_silhoutte_k_evaluation(name_of_data: str, data_array, max_cluster
     plt.legend()
     plt.show()
 
-def plot_kmeans_clusters(data_array, number_of_clusters,name_of_data: str, path_to_images):
-    # compute K-Means with k = number_of_clusters
-    centroids, _ = kmeans(data_array, number_of_clusters,)
-    # assign each sample to a cluster
-    idx, _ = vq(data_array, centroids)
-    # plot using numpy's logical indexing
-    fig, ax = plt.subplots(figsize=(10, 5.5))
-    fig.suptitle(f"K-means clusters for {name_of_data}", fontsize=12)
-    for cluster in range(number_of_clusters):
-        # Assign colours as shown here https://www.python-course.eu/matplotlib.php
-        colours = ["ob", "ok", "or", "og", "om", "oc", "oy","ok","ow","xk","xy","xc","xm"]
-        ax.plot(
-            data_array[idx == cluster, 0],
-            data_array[idx == cluster, 1],
-            colours[cluster],
-            label=f"cluster {cluster}",
-        )
-        plt.legend()
-    plt.savefig(f"{path_to_images}/{name_of_data}")
-    plt.show()
-    return idx
+def plot_kmeans_clusters(data_array,number_of_clusters,name_of_data:str):
+  # computing K-Means with K = number_of_clusters
+  centroids,_ = kmeans(data_array,number_of_clusters,random_state=42,thresh=1e-05)
+  # assign each sample to a cluster
+  idx,_ = vq(data_array,centroids)
+  # some plotting using numpy's logical indexing
+  fig, ax = plt.subplots(figsize=(10,5.5))
+  fig.suptitle(f"K-means clusters for {name_of_data}", fontsize=12)
+  for cluster in range(number_of_clusters):
+    colours = ['ob','ok','or','og','om','oc','oy']
+    ax.plot(data_array[idx==cluster,0],data_array[idx==cluster,1],colours[cluster],label=f'cluster {cluster}')
+    plt.legend()
+  plt.savefig(f"{PATH}/images/k_means_{name_of_data}")
+  plt.show()
+  return idx
+
+def get_clustered_features(product_name,df_features):
+  #product_name = 'all_products'
+  # Reduce dimensions using PCA
+  pca = PCA(n_components=2)
+  principalComponents = pca.fit_transform(df_features)
+  # Save components to a DataFrame
+  PCA_components = pd.DataFrame(principalComponents)
+  # Plot the explained variances
+  features = range(pca.n_components_)
+
+  # Optimum clusters
+  # plot_elbow_silhoutte_k_evaluation(f"{product_name}_{experiment}_pca_kmeans",np.asarray(PCA_components),15)
+  kelbow_visualizer = KElbowVisualizer(
+      KMeans(random_state=42), k=15,metric='distortion',
+      timings=False,locate_elbow=True,size=(512, 340))
+  kelbow_visualizer.fit(np.asarray(PCA_components))
+  pca_k_value = kelbow_visualizer.elbow_value_
+  plt.title('Locating optimum number of clusters (k) using the elbow method')
+  plt.legend()
+  plt.savefig(f"{image_dump}/{experiment}_elbow")
+
+  clusters_features_uncorrelated = plot_kmeans_clusters(np.asarray(PCA_components),pca_k_value,f"{product_name}_{experiment}_pca_kmeans",f"{image_dump}")
+
+  details = [(name,cluster) for name, cluster in zip(df_features.index,clusters_features_uncorrelated)]
+  cluster_df = pd.DataFrame(details,columns=['names','cluster'])
+  cluster_df['names'].astype('category')
+  get_names = df_features.reset_index().rename(columns={'country_product':'names'})
+  get_names.names.astype('category')
+  country_cluster = pd.merge(get_names,cluster_df,how='inner', on='names')
+  groups = country_cluster.groupby(['cluster']).agg('mean')
+
+  dict_clust = {0:'cluster_0',
+                1: 'cluster_1',
+                2: 'cluster_2',
+                3: 'cluster_3',
+                4: 'cluster_4',
+                5: 'cluster_5'
+                }
+  clust = groups.reset_index()
+  clust.replace({'cluster': dict_clust},inplace=True)
+  clust.set_index('cluster',inplace=True)
+  # x = clust.iloc[-1,:]
+  cluster_features = clust.T
+  
+  n = len(cluster_features.columns)
+  fig, ax = plt.subplots(n, 1, figsize=(10, n * 3), sharex=True,sharey=True)
+  for i in range(n):
+      plt.sca(ax[i])
+      col = cluster_features.columns[i]
+      cluster_features[col].plot(kind='bar')
+      plt.title(f"Features for {col}")
+      # plt.tight_layout()
+  fig.savefig(f"{image_dump}/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
+  return country_cluster,cluster_features
