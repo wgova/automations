@@ -1,5 +1,8 @@
 ﻿import seaborn as sns
-
+import re
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 def histograms_numeric_columns(df, numerical_columns):
     """
