@@ -92,7 +92,7 @@ def plot_kmeans_clusters(data_array,number_of_clusters,name_of_data:str):
   plt.show()
   return idx
 
-def get_clustered_features(product_name,df_features,experiment,PATH):
+def get_clustered_features(product_name,df_features,experiment):
   #product_name = 'all_products'
   # Reduce dimensions using PCA
   pca = PCA(n_components=2)
@@ -103,7 +103,7 @@ def get_clustered_features(product_name,df_features,experiment,PATH):
   features = range(pca.n_components_)
 
   # Optimum clusters
-  # plot_elbow_silhoutte_k_evaluation(f"{product_name}_{experiment}_pca_kmeans",np.asarray(PCA_components),15)
+  plot_elbow_silhoutte_k_evaluation(f"{product_name}_{experiment}_pca_kmeans",np.asarray(PCA_components),15)
   kelbow_visualizer = KElbowVisualizer(
       KMeans(random_state=42), k=15,metric='distortion',
       timings=False,locate_elbow=True,size=(512, 340))
@@ -111,7 +111,7 @@ def get_clustered_features(product_name,df_features,experiment,PATH):
   pca_k_value = kelbow_visualizer.elbow_value_
   plt.title('Locating optimum number of clusters (k) using the elbow method')
   plt.legend()
-  #plt.savefig(f"{PATH}/images/{experiment}_elbow")
+  plt.savefig(f"{PATH}/images/{experiment}_elbow")
 
   clusters_features_uncorrelated = plot_kmeans_clusters(np.asarray(PCA_components),pca_k_value,f"{product_name}_{experiment}_pca_kmeans",f"{PATH}/images")
   details = [(name,cluster) for name, cluster in zip(df_features.index,clusters_features_uncorrelated)]
@@ -143,5 +143,5 @@ def get_clustered_features(product_name,df_features,experiment,PATH):
       cluster_features[col].plot(kind='bar')
       plt.title(f"Features for {col}")
       plt.tight_layout()
-  #fig.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
+  fig.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
   return country_cluster,cluster_features
