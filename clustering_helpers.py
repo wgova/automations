@@ -113,7 +113,7 @@ def get_clustered_features(product_name,df_features,experiment):
   plt.legend()
   plt.savefig(f"{PATH}/images/{experiment}_elbow")
 
-  clusters_features_uncorrelated = plot_kmeans_clusters(np.asarray(PCA_components),pca_k_value,f"{product_name}_{experiment}_pca_kmeans",f"{PATH}/images")
+  clusters_features_uncorrelated = plot_kmeans_clusters(np.asarray(PCA_components),pca_k_value,f"{product_name}_{experiment}_pca_kmeans")
   details = [(name,cluster) for name, cluster in zip(df_features.index,clusters_features_uncorrelated)]
   cluster_df = pd.DataFrame(details,columns=['names','cluster'])
   cluster_df['names'].astype('category')
