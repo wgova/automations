@@ -134,14 +134,14 @@ def get_clustered_features(product_name,df_features,experiment):
   clust.set_index('cluster',inplace=True)
   # x = clust.iloc[-1,:]
   cluster_features = clust.T
-  
-  n = len(cluster_features.columns)
-  fig, ax = plt.subplots(n, 1, figsize=(10, n * 3), sharex=True,sharey=True)
-  for i in range(n):
-      plt.sca(ax[i])
-      col = cluster_features.columns[i]
-      cluster_features[col].plot(kind='bar')
-      plt.title(f"Features for {col}")
-      plt.tight_layout()
-  fig.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
+  cluster_features.plot(kind='bar',title=f"Features for {col}")
+  #n = len(cluster_features.columns)
+  #fig, ax = plt.subplots(n, 1, figsize=(10, n * 3), sharex=True,sharey=True)
+  #for i in range(n):
+  #    plt.sca(ax[i])
+  #    col = cluster_features.columns[i]
+  #    cluster_features[col].plot(kind='bar')
+  #    plt.title(f"Features for {col}")
+  #    plt.tight_layout()
+  plt.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
   return country_cluster,cluster_features
