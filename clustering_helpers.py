@@ -13,6 +13,7 @@ from sklearn.decomposition import PCA
 # Functions for clustering
 # given a linkage model, plot dendogram, with the colors indicated by the a cutoff point at which we define clusters
 # Example from https://scikit-learn.org/stable/auto_examples/cluster/plot_agglomerative_dendrogram.html#sphx-glr-auto-examples-cluster-plot-agglomerative-dendrogram-py
+PATH = '/content/drive/My Drive/Stellenbosch/Webster/all_products'
 def plot_dendrogram(raw_ts_dataframe, name_of_dataset, **kwargs):
     model = AgglomerativeClustering(n_clusters=None, distance_threshold=0).fit(
         raw_ts_dataframe.T.values
@@ -113,7 +114,6 @@ def get_clustered_features(product_name,df_features,experiment,PATH):
   #plt.savefig(f"{PATH}/images/{experiment}_elbow")
 
   clusters_features_uncorrelated = plot_kmeans_clusters(np.asarray(PCA_components),pca_k_value,f"{product_name}_{experiment}_pca_kmeans",f"{PATH}/images")
-
   details = [(name,cluster) for name, cluster in zip(df_features.index,clusters_features_uncorrelated)]
   cluster_df = pd.DataFrame(details,columns=['names','cluster'])
   cluster_df['names'].astype('category')
