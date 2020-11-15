@@ -103,7 +103,7 @@ def get_clustered_features(product_name,df_features,experiment):
   features = range(pca.n_components_)
 
   # Optimum clusters
-  plot_elbow_silhoutte_k_evaluation(f"{product_name}_{experiment}_pca_kmeans",np.asarray(PCA_components),15)
+  # plot_elbow_silhoutte_k_evaluation(f"{product_name}_{experiment}_pca_kmeans",np.asarray(PCA_components),15)
   kelbow_visualizer = KElbowVisualizer(
       KMeans(random_state=42), k=15,metric='distortion',
       timings=False,locate_elbow=True,size=(512, 340))
