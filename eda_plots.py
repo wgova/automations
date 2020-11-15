@@ -41,3 +41,22 @@ fig.show()
 def visualize_null_values():
     sns.heatmap(df.isnull(),yticklabels=False)
     plt.show()
+
+# Plots for country comparison per product
+def plot_time_series_data_in_cluster(ts_data,country_cluster):
+  product_name = "all_products" 
+  for c in country_cluster.cluster.unique():
+    cluster = country_cluster[country_cluster.cluster==c]
+    country_list = cluster['names'].unique()
+    product = pd.pivot_table(ts_data,index='year',columns='country_product',
+                            values='export_val',aggfunc=np.mean)
+    df = product[country_list]
+    df.fillna(0,inplace=True)
+    plt.figure(figsize=(10,5.5))
+    df.plot(subplots=False,figsize=(10,5.5),legend=False,
+                              title=(f"Historical exports for countries in cluster {c} for {product_name}"))
+    plt.xticks(rotation=70)
+    # plt.legend()
+    plt.ylabel("Export value")
+    plt.savefig(f"{image_dump}/{product_name}_cluster_{c}")
+    plt.show()
