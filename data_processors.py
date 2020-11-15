@@ -123,7 +123,7 @@ def drop_null_columns(df, missing_percent):
     Returns df
     """
     series = check_null_columns(df, missing_percent=missing_percent)
-    list_of_cols = series.index.to_list()
+    # list_of_cols = series.index.to_list()
     df.drop(columns=list_of_cols)
     return df
 
