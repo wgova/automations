@@ -47,8 +47,7 @@ def visualize_null_values():
     plt.show()
 
 # Plots for country comparison per product
-def plot_time_series_data_in_cluster(ts_data,country_cluster,image_dump):
-  product_name = "all_products" 
+def plot_time_series_data_in_cluster(ts_data,country_cluster,image_dump,dataset_name,experiment=experiment):
   for c in country_cluster.cluster.unique():
     cluster = country_cluster[country_cluster.cluster==c]
     country_list = cluster['names'].unique()
@@ -58,9 +57,9 @@ def plot_time_series_data_in_cluster(ts_data,country_cluster,image_dump):
     df.fillna(0,inplace=True)
     plt.figure(figsize=(10,5.5))
     df.plot(subplots=False,figsize=(10,5.5),legend=False,
-                              title=(f"Historical exports for countries in cluster {c} for {product_name}"))
+                              title=(f"Exports for countries in cluster {c} from {dataset_name} for {experiment}"))
     plt.xticks(rotation=70)
     # plt.legend()
     plt.ylabel("Export value")
-    plt.savefig(f"{image_dump}/{product_name}_cluster_{c}")
+    plt.savefig(f"{image_dump}/{experiment}_{dataset_name}_cluster_{c}")
     plt.show()
