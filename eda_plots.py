@@ -47,7 +47,7 @@ def visualize_null_values():
     plt.show()
 
 # Plots for country comparison per product
-def plot_time_series_data_in_cluster(ts_data,country_cluster,image_dump,dataset_name,experiment=experiment):
+def plot_time_series_data_in_cluster(ts_data,country_cluster,image_dump,dataset_name,experiment="experiment"):
   for c in country_cluster.cluster.unique():
     cluster = country_cluster[country_cluster.cluster==c]
     country_list = cluster['names'].unique()
