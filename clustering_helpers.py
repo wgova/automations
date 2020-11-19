@@ -9,7 +9,7 @@ from scipy.cluster.vq import kmeans, vq
 from sklearn.metrics.cluster import homogeneity_score
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.decomposition import PCA
-from automations.data_processors import *
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler, StandardScaler
 
 # Functions for clustering
 # given a linkage model, plot dendogram, with the colors indicated by the a cutoff point at which we define clusters
@@ -99,7 +99,7 @@ def scale_features(df):
         scaler.fit_transform(df), columns=df.columns, index=df.index
     )
     return scaled_df
-    
+
 def get_clustered_features(product_name,df_features,experiment):
     df_features = scale_features(df_features)
     #product_name = 'all_products'
