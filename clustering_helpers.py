@@ -9,6 +9,7 @@ from scipy.cluster.vq import kmeans, vq
 from sklearn.metrics.cluster import homogeneity_score
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.decomposition import PCA
+from automations.data_processors import *
 
 # Functions for clustering
 # given a linkage model, plot dendogram, with the colors indicated by the a cutoff point at which we define clusters
@@ -92,56 +93,64 @@ def plot_kmeans_clusters(data_array,number_of_clusters,name_of_data:str):
   plt.show()
   return idx
 
+def scale_features(df):
+    scaler = StandardScaler()
+    scaled_df = pd.DataFrame(
+        scaler.fit_transform(df), columns=df.columns, index=df.index
+    )
+    return scaled_df
+    
 def get_clustered_features(product_name,df_features,experiment):
-  #product_name = 'all_products'
-  # Reduce dimensions using PCA
-  pca = PCA(n_components=2)
-  principalComponents = pca.fit_transform(df_features)
-  # Save components to a DataFrame
-  PCA_components = pd.DataFrame(principalComponents)
-  # Plot the explained variances
-  features = range(pca.n_components_)
+    df_features = scale_features(df_features)
+    #product_name = 'all_products'
+    # Reduce dimensions using PCA
+    pca = PCA(n_components=2)
+    principalComponents = pca.fit_transform(df_features)
+    # Save components to a DataFrame
+    PCA_components = pd.DataFrame(principalComponents)
+    # Plot the explained variances
+    features = range(pca.n_components_)
 
-  # Optimum clusters
-  # plot_elbow_silhoutte_k_evaluation(f"{product_name}_{experiment}_pca_kmeans",np.asarray(PCA_components),15)
-  kelbow_visualizer = KElbowVisualizer(
-      KMeans(random_state=42), k=15,metric='distortion',
-      timings=False,locate_elbow=True,size=(512, 340))
-  kelbow_visualizer.fit(np.asarray(PCA_components))
-  pca_k_value = kelbow_visualizer.elbow_value_
-  plt.title('Locating optimum number of clusters (k) using the elbow method')
-  plt.legend()
-  plt.savefig(f"{PATH}/images/{experiment}_elbow")
+    # Optimum clusters
+    # plot_elbow_silhoutte_k_evaluation(f"{product_name}_{experiment}_pca_kmeans",np.asarray(PCA_components),15)
+    kelbow_visualizer = KElbowVisualizer(
+        KMeans(random_state=42), k=15,metric='distortion',
+        timings=False,locate_elbow=True,size=(512, 340))
+    kelbow_visualizer.fit(np.asarray(PCA_components))
+    pca_k_value = kelbow_visualizer.elbow_value_
+    plt.title('Locating optimum number of clusters (k) using the elbow method')
+    plt.legend()
+    plt.savefig(f"{PATH}/images/{experiment}_elbow")
 
-  clusters_features_uncorrelated = plot_kmeans_clusters(np.asarray(PCA_components),pca_k_value,f"{product_name}_{experiment}_pca_kmeans")
-  details = [(name,cluster) for name, cluster in zip(df_features.index,clusters_features_uncorrelated)]
-  cluster_df = pd.DataFrame(details,columns=['names','cluster'])
-  cluster_df['names'].astype('category')
-  get_names = df_features.reset_index().rename(columns={'country_product':'names'})
-  get_names.names.astype('category')
-  country_cluster = pd.merge(get_names,cluster_df,how='inner', on='names')
-  groups = country_cluster.groupby(['cluster']).agg('mean')
+    clusters_features_uncorrelated = plot_kmeans_clusters(np.asarray(PCA_components),pca_k_value,f"{product_name}_{experiment}_pca_kmeans")
+    details = [(name,cluster) for name, cluster in zip(df_features.index,clusters_features_uncorrelated)]
+    cluster_df = pd.DataFrame(details,columns=['names','cluster'])
+    cluster_df['names'].astype('category')
+    get_names = df_features.reset_index().rename(columns={'country_product':'names'})
+    get_names.names.astype('category')
+    country_cluster = pd.merge(get_names,cluster_df,how='inner', on='names')
+    groups = country_cluster.groupby(['cluster']).agg('mean')
 
-  dict_clust = {0:'cluster_0',
-                1: 'cluster_1',
-                2: 'cluster_2',
-                3: 'cluster_3',
-                4: 'cluster_4',
-                5: 'cluster_5'
-                }
-  clust = groups.reset_index()
-  clust.replace({'cluster': dict_clust},inplace=True)
-  clust.set_index('cluster',inplace=True)
-  # x = clust.iloc[-1,:]
-  cluster_features = clust.T
-  cluster_features.plot(kind='bar',title=f"Features for clusters")
-  #n = len(cluster_features.columns)
-  #fig, ax = plt.subplots(n, 1, figsize=(10, n * 3), sharex=True,sharey=True)
-  #for i in range(n):
-  #    plt.sca(ax[i])
-  #    col = cluster_features.columns[i]
-  #    cluster_features[col].plot(kind='bar')
-  #    plt.title(f"Features for {col}")
-  #    plt.tight_layout()
-  plt.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
-  return country_cluster,cluster_features
+    dict_clust = {0:'cluster_0',
+                    1: 'cluster_1',
+                    2: 'cluster_2',
+                    3: 'cluster_3',
+                    4: 'cluster_4',
+                    5: 'cluster_5'
+                    }
+    clust = groups.reset_index()
+    clust.replace({'cluster': dict_clust},inplace=True)
+    clust.set_index('cluster',inplace=True)
+    # x = clust.iloc[-1,:]
+    cluster_features = clust.T
+    cluster_features.plot(kind='bar',title=f"Features for clusters")
+    #n = len(cluster_features.columns)
+    #fig, ax = plt.subplots(n, 1, figsize=(10, n * 3), sharex=True,sharey=True)
+    #for i in range(n):
+    #    plt.sca(ax[i])
+    #    col = cluster_features.columns[i]
+    #    cluster_features[col].plot(kind='bar')
+    #    plt.title(f"Features for {col}")
+    #    plt.tight_layout()
+    plt.savefig(f"{PATH}/images/{product_name}_{experiment}_pca_kmeans_features.png",bbox_inches = "tight")
+    return country_cluster,cluster_features
