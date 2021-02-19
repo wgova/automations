@@ -14,7 +14,7 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler, StandardScaler
 # Functions for clustering
 # given a linkage model, plot dendogram, with the colors indicated by the a cutoff point at which we define clusters
 # Example from https://scikit-learn.org/stable/auto_examples/cluster/plot_agglomerative_dendrogram.html#sphx-glr-auto-examples-cluster-plot-agglomerative-dendrogram-py
-PATH = '/content/drive/My Drive/Stellenbosch/Webster/all_products'
+PATH = '/content/drive/My Drive/Stellenbosch/phd/all_products'
 def plot_dendrogram(raw_ts_dataframe, name_of_dataset, **kwargs):
     model = AgglomerativeClustering(n_clusters=None, distance_threshold=0).fit(
         raw_ts_dataframe.T.values
