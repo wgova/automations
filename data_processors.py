@@ -37,10 +37,10 @@ def change_column_prefix(df, old_prefix="export_val__", new_prefix=None):
 
 
 def simplify_column_name(df, old_name, new_name):
-    df.columns = df.columns = [
+    df.columns = [
         re.sub(f"^{old_name}", f"{new_name}", x) for x in df.columns
     ]
-    return df.columns
+    return df
 
 
 def get_date_int(df, date_column):
