@@ -71,7 +71,7 @@ def apply_stationarity_test_to_df_dict(dict_name,test):
     else:
       df=kpss_test_multiple_columns(dict_name[key].iloc[:,-5:],variable_name=key)
     list_df.append(df)
-  return pd.concat(list_df)
+  return list_df
 # https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
 # https://towardsdatascience.com/6-ways-to-test-for-a-normal-distribution-which-one-to-use-9dcf47d8fa93
 # https://medium.com/@rrfd/testing-for-normality-applications-with-python-6bf06ed646a9
