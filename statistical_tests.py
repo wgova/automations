@@ -47,6 +47,7 @@ def adf_test_multiple_columns(df,variable_name):
                    f'{variable_name}_5%_adf_crit',
                    f'{variable_name}_10%_adf_crit']
   d=pd.concat([r.drop(['crit_vals','x'], axis=1),crits],axis=1)
+  print(f'Completed tests for {variable_name}')
   return d
 
 def kpss_test_multiple_columns(df,variable_name):
@@ -61,6 +62,7 @@ def kpss_test_multiple_columns(df,variable_name):
                    f'{key}_2.5%_adf_crit',
                    f'{variable_name}_1%_adf_crit']
   d=pd.concat([r.drop(['crit_vals'], axis=1),crits],axis=1)
+  print(f'Completed tests for {variable_name}')
   return d
 
 def apply_stationarity_test_to_df_dict(dict_name,test): 
