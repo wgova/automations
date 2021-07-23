@@ -51,7 +51,9 @@ def adf_test_multiple_columns(df,variable_name):
   return d
 
 def kpss_test_multiple_columns(df,variable_name):
-  r=df.apply(lambda x: kpss(x,lags="auto",regression='ct')).T
+  r=df\
+.fillna(0)\
+.apply(lambda x: kpss(x,lags="auto",regression='ct')).T
   r.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
                  f'{variable_name}_kpss_lags_used',
