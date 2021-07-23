@@ -51,21 +51,20 @@ def adf_test_multiple_columns(df,variable_name):
   return d
 
 def kpss_test_multiple_columns(df,variable_name):
-  r=df\
-.fillna(0)\
-.apply(lambda x: kpss(x,lags="auto",regression='ct')).T
-  r.columns = [f'{variable_name}_kpss_test_statistic',
+    df = pd.to_numeric(df, errors='coerce')
+    r=df.apply(lambda x: kpss(x,lags="auto",regression='ct')).T
+    r.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
                  f'{variable_name}_kpss_lags_used',
                  f'crit_vals']
-  crits = r['crit_vals'].apply(pd.Series)
-  crits.columns = [f'{variable_name}_adf_10%_crit',
+    crits = r['crit_vals'].apply(pd.Series)
+    crits.columns = [f'{variable_name}_adf_10%_crit',
                    f'{variable_name}_5%_adf_crit',
                    f'{key}_2.5%_adf_crit',
                    f'{variable_name}_1%_adf_crit']
-  d=pd.concat([r.drop(['crit_vals'], axis=1),crits],axis=1)
-  print(f'Completed tests for {variable_name}')
-  return d
+    d=pd.concat([r.drop(['crit_vals'], axis=1),crits],axis=1)
+    print(f'Completed tests for {variable_name}')
+    return d
 
 def apply_stationarity_test_to_df_dict(dict_name,test): 
   list_df =[]
