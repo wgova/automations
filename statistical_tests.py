@@ -51,7 +51,6 @@ def adf_test_multiple_columns(df,variable_name):
   return d
 
 def kpss_test_multiple_columns(df,variable_name):
-    df = df.dropna(axis=1)
     r=df.apply(lambda x: kpss(x,lags="auto",regression='ct')).T
     r.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
@@ -66,7 +65,7 @@ def kpss_test_multiple_columns(df,variable_name):
     print(f'Completed tests for {variable_name}')
     return d
 
-def apply_stationarity_test_to_df_dict(dict_name,test): 
+def apply_stationarity_test_to_df_dict(dict_name,test):
   list_df =[]
   for key,values in dict_name.items():
     if test=='adf':
