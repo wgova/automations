@@ -59,7 +59,7 @@ def kpss_test_multiple_columns(df,variable_name):
     crits = r['crit_vals'].apply(pd.Series)
     crits.columns = [f'{variable_name}_adf_10%_crit',
                    f'{variable_name}_5%_adf_crit',
-                   f'{variable_name}_2.5%_adf_crit',
+                   f'{variable_name}_2p5%_adf_crit',
                    f'{variable_name}_1%_adf_crit']
     d=pd.concat([r.drop(['crit_vals'], axis=1),crits],axis=1)
     print(f'Completed tests for {variable_name}')
