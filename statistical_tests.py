@@ -52,7 +52,7 @@ def adf_test_multiple_columns(df,variable_name):
 
 def kpss_test_multiple_columns(df,variable_name):
     df = df.dropna(axis=1)
-    r=df.apply(lambda x: kpss(x,lags="auto",regression='ct',store=True)).T
+    r=df.apply(lambda x: kpss(x,lags="auto",regression='ct')).T
     r.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
                  f'{variable_name}_kpss_lags_used',
@@ -60,7 +60,7 @@ def kpss_test_multiple_columns(df,variable_name):
     crits = r['crit_vals'].apply(pd.Series)
     crits.columns = [f'{variable_name}_adf_10%_crit',
                    f'{variable_name}_5%_adf_crit',
-                   f'{key}_2.5%_adf_crit',
+                   f'{variable_name}_2.5%_adf_crit',
                    f'{variable_name}_1%_adf_crit']
     d=pd.concat([r.drop(['crit_vals'], axis=1),crits],axis=1)
     print(f'Completed tests for {variable_name}')
