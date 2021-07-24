@@ -51,7 +51,9 @@ def adf_test_ts_columns(df,variable_name):
   return d
 
 def kpss_test_ts_columns(df,variable_name):
-    r=df.apply(lambda x: kpss(x.fillna(0),lags="auto",regression='ct',warnings.filterwarnings('error'))).T
+    r=df.apply(lambda x: kpss(x.fillna(0),lags="auto",regression='ct'),warnings.filterwarnings('error')
+                             
+              ).T
     r.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
                  f'{variable_name}_kpss_lags_used',
