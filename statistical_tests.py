@@ -36,7 +36,7 @@ def shapiro_wilk_test(data, alpha=0.05):
     return sw_test
 
 def adf_test_ts_columns(df,variable_name):
-  r=df.apply(lambda x: adfuller(x,autolag='AIC')).T
+  r=df.apply(lambda x: adfuller(x.fillna(0),autolag='AIC')).T
   r.columns = [f'{variable_name}_adf_test_statistic',
                f'{variable_name}_adf_p-value',
                f'{variable_name}_adf_lags_used',
