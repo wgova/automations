@@ -66,14 +66,15 @@ def kpss_test_ts_columns(df,variable_name):
     return d
 
 def test_stationarity_for_dict_of_dfs(dict_name,test):
+  list_valid_tests = ['adf','kpss']
+  if test not in list_valid_tests:
+        raise ValueError('Valid tests for this function are "adf" and "kpss"')
   list_df =[]
   for k,v in dict_name.items():
     if test=='adf':
       df=adf_test_multiple_columns(dict_name[k],variable_name=k)
-    elif test=='kpss':
-      df=kpss_test_multiple_columns(dict_name[k],variable_name=k)
     else:
-        print('Valid tests for this function are 'adf' and 'kpss')
+      df=kpss_test_multiple_columns(dict_name[k],variable_name=k)
     list_df.append(df)
   return list_df
 # https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
