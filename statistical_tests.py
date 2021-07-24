@@ -73,8 +73,8 @@ def test_stationarity_for_dict_of_dfs(dict_name,test):
         raise ValueError('Valid tests for this function are "adf" and "kpss"')
   list_df =[]
   for k,v in dict_name.items():
+    test_df = dict_name[k]
     if test=='adf':
-        test_df = dict_name[k]
         df=adf_test_ts_columns(test_df,variable_name=k)
     else:
         print(f'Nulls present, may affect :{test_df.isnull().sum()}')
