@@ -72,15 +72,14 @@ def test_stationarity_for_dict_of_dfs(dict_name,test):
   list_df =[]
   for k,v in dict_name.items():
     if test=='adf':
-       test_df = dict_name[k]
-      print(f'Dataframe input: {test_df.shape}')
-      df=adf_test_ts_columns(test_df,variable_name=k)
+        test_df = dict_name[k]
+        df=adf_test_ts_columns(test_df,variable_name=k)
     else:
-      print(f'Nulls present, may affect :{test_df.isnull().sum()}')
-      try:
+        print(f'Nulls present, may affect :{test_df.isnull().sum()}')
+        try:
             df=kpss_test_ts_columns(test_df,variable_name=k)
-      except ValueError:
-        pass
+        except ValueError:
+            pass
     list_df.append(df)
   print(f'Output: len{list_df}')
   return list_df
