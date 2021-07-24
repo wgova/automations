@@ -72,9 +72,9 @@ def test_stationarity_for_dict_of_dfs(dict_name,test):
   list_df =[]
   for k,v in dict_name.items():
     if test=='adf':
-      df=adf_test_multiple_columns(dict_name[k],variable_name=k)
+      df=adf_test_ts_columns(dict_name[k],variable_name=k)
     else:
-      df=kpss_test_multiple_columns(dict_name[k],variable_name=k)
+      df=kpss_test_ts_columns(dict_name[k],variable_name=k)
     list_df.append(df)
   return list_df
 # https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
