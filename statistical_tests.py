@@ -52,19 +52,19 @@ def adf_test_ts_columns(df,variable_name):
 
 def kpss_test_ts_columns(df,variable_name):
     try:
-        r=df.apply(lambda x: kpss(x.fillna(0),lags="auto",regression='ct')).T
+        a=df.apply(lambda x: kpss(x.fillna(0),lags="auto",regression='ct')).T
     except ValueError:
             pass
-    r.columns = [f'{variable_name}_kpss_test_statistic',
+    a.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
                  f'{variable_name}_kpss_lags_used',
                  'crit_vals']
-    crits = r['crit_vals'].apply(pd.Series)
+    crits = a['crit_vals'].apply(pd.Series)
     crits.columns = [f'{variable_name}_kpss_10%_crit',
                      f'{variable_name}_kpss_5%_crit',
                      f'{variable_name}_kpss_2_5%_crit',
                      f'{variable_name}_kpss_1%_crit']
-    d=pd.concat([r.drop(['crit_vals'], axis=1),crits],axis=1)
+    d=pd.concat([a.drop(['crit_vals'], axis=1),crits],axis=1)
     print(f'Completed tests for {variable_name}')
     return d
 
@@ -73,12 +73,17 @@ def test_stationarity_for_dict_of_dfs(dict_name,test):
   if test not in list_valid_tests:
         raise ValueError('Valid tests for this function are "adf" and "kpss"')
   list_df =[]
+  validated = ['export_value','diff1_export_value','log_export_value']
   for k,v in dict_name.items():
-    test_df = dict_name[k]
-    if test=='adf':
-        df=adf_test_ts_columns(test_df,variable_name=k)
+    print(f'Running tests for: {k}')
+    if k in validated:
+      test_df = dict_name[k]
+      if test=='adf':
+          df=adf_test_ts_columns(test_df,variable_name=k)
+      else:
+          df=kpss_test_ts_columns(test_df,variable_name=k)
     else:
-        df=kpss_test_ts_columns(test_df,variable_name=k)
+      print(f'{k} not specified for {test}')
     list_df.append(df)
   print(f'Output: len{list_df}')
   return list_df
