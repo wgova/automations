@@ -72,10 +72,12 @@ def test_stationarity_for_dict_of_dfs(dict_name,test):
   list_df =[]
   for k,v in dict_name.items():
     if test=='adf':
+      print(f'Dataframe input: {dict_name[k].shape}')
       df=adf_test_ts_columns(dict_name[k],variable_name=k)
     else:
       df=kpss_test_ts_columns(dict_name[k],variable_name=k)
     list_df.append(df)
+  print(f'Output: len{list_df}')
   return list_df
 # https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
 # https://towardsdatascience.com/6-ways-to-test-for-a-normal-distribution-which-one-to-use-9dcf47d8fa93
