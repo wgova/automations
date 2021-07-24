@@ -51,7 +51,7 @@ def adf_test_ts_columns(df,variable_name):
   return d
 
 def kpss_test_ts_columns(df,variable_name):
-    r=df.apply(lambda x: kpss(x,lags="auto",regression='ct')).T
+    r=df.apply(lambda x: kpss(x.fillna(0),lags="auto",regression='ct',warnings.filterwarnings('error'))).T
     r.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
                  f'{variable_name}_kpss_lags_used',
@@ -72,10 +72,15 @@ def test_stationarity_for_dict_of_dfs(dict_name,test):
   list_df =[]
   for k,v in dict_name.items():
     if test=='adf':
-      print(f'Dataframe input: {dict_name[k].shape}')
-      df=adf_test_ts_columns(dict_name[k],variable_name=k)
+       test_df = dict_name[k]
+      print(f'Dataframe input: {test_df.shape}')
+      df=adf_test_ts_columns(test_df,variable_name=k)
     else:
-      df=kpss_test_ts_columns(dict_name[k],variable_name=k)
+      print(f'Nulls present, may affect :{test_df.isnull().sum()}')
+      try:
+            df=kpss_test_ts_columns(test_df,variable_name=k)
+      except ValueError:
+        pass
     list_df.append(df)
   print(f'Output: len{list_df}')
   return list_df
