@@ -35,7 +35,7 @@ def shapiro_wilk_test(data, alpha=0.05):
     )
     return sw_test
 
-def adf_test_multiple_columns(df,variable_name):
+def adf_test_ts_columns(df,variable_name):
   r=df.apply(lambda x: adfuller(x,autolag='AIC')).T
   r.columns = [f'{variable_name}_adf_test_statistic',
                f'{variable_name}_adf_p-value',
@@ -44,13 +44,13 @@ def adf_test_multiple_columns(df,variable_name):
                f'crit_vals','x']
   crits = r['crit_vals'].apply(pd.Series)
   crits.columns = [f'{variable_name}_adf_1%_crit',
-                   f'{variable_name}_5%_adf_crit',
-                   f'{variable_name}_10%_adf_crit']
+                   f'{variable_name}_adf_5%_crit',
+                   f'{variable_name}_adf_10%_crit']
   d=pd.concat([r.drop(['crit_vals','x'], axis=1),crits],axis=1)
   print(f'Completed tests for {variable_name}')
   return d
 
-def kpss_test_multiple_columns(df,variable_name):
+def kpss_test_ts_columns(df,variable_name):
     r=df.apply(lambda x: kpss(x,lags="auto",regression='ct')).T
     r.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
@@ -58,20 +58,22 @@ def kpss_test_multiple_columns(df,variable_name):
                  f'crit_vals']
     crits = r['crit_vals'].apply(pd.Series)
     crits.columns = [f'{variable_name}_kpss_10%_crit',
-                   f'{variable_name}_5%_kpss_crit',
-                   f'{variable_name}_2p5%_kpss_crit',
-                   f'{variable_name}_1%_kpss_crit']
+                     f'{variable_name}_kpss_5%_crit',
+                     f'{variable_name}_kpss_2_5%_crit',
+                     f'{variable_name}_kpss_1%_crit']
     d=pd.concat([r.drop(['crit_vals'], axis=1),crits],axis=1)
     print(f'Completed tests for {variable_name}')
     return d
 
-def apply_stationarity_test_to_df_dict(dict_name,test):
+def test_stationarity_for_dict_of_dfs(dict_name,test):
   list_df =[]
-  for key,values in dict_name.items():
+  for k,v in dict_name.items():
     if test=='adf':
-      df=adf_test_multiple_columns(dict_name[key],variable_name=key)
+      df=adf_test_multiple_columns(dict_name[k],variable_name=k)
+    elif test=='kpss':
+      df=kpss_test_multiple_columns(dict_name[k],variable_name=k)
     else:
-      df=kpss_test_multiple_columns(dict_name[key],variable_name=key)
+        print('Valid tests for this function are 'adf' and 'kpss')
     list_df.append(df)
   return list_df
 # https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
