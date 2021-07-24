@@ -41,7 +41,7 @@ def adf_test_ts_columns(df,variable_name):
                f'{variable_name}_adf_p-value',
                f'{variable_name}_adf_lags_used',
                f'{variable_name}_adf_obs',
-               f'crit_vals','x']
+               'crit_vals','x']
   crits = r['crit_vals'].apply(pd.Series)
   crits.columns = [f'{variable_name}_adf_1%_crit',
                    f'{variable_name}_adf_5%_crit',
@@ -58,7 +58,7 @@ def kpss_test_ts_columns(df,variable_name):
     r.columns = [f'{variable_name}_kpss_test_statistic',
                  f'{variable_name}_kpss_p-value',
                  f'{variable_name}_kpss_lags_used',
-                 f'crit_vals']
+                 'crit_vals']
     crits = r['crit_vals'].apply(pd.Series)
     crits.columns = [f'{variable_name}_kpss_10%_crit',
                      f'{variable_name}_kpss_5%_crit',
