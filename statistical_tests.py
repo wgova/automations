@@ -86,7 +86,7 @@ def test_stationarity_for_dict_of_dfs(dict_name,test):
     else:
       print(f'{k} not specified for {test}')
     list_df.append(df)
-  print(f'Output: len{list_df}')
+  print(f'Output: len{list_df[0]}')
   return list_df
 # https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
 # https://towardsdatascience.com/6-ways-to-test-for-a-normal-distribution-which-one-to-use-9dcf47d8fa93
