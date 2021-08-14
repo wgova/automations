@@ -36,7 +36,7 @@ def shapiro_wilk_test(data, alpha=0.05):
     return sw_test
 
 def adf_test_ts_columns(df,variable_name):
-  r=df.apply(lambda x: adfuller(x.fillna(0),autolag='AIC')).T
+  r=df.apply(lambda x: adfuller(x.fillna(method='ffill'),autolag='AIC')).T
   r.columns = [f'{variable_name}_adf_test_statistic',
                f'{variable_name}_adf_p-value',
                f'{variable_name}_adf_lags_used',
@@ -53,7 +53,7 @@ def adf_test_ts_columns(df,variable_name):
 def kpss_test_ts_columns(df,variable_name):
     try:
       #Differenced time series have negative values therefore infinite intermediates that cannot be converted to int during 'auto' lag
-        a=df.apply(lambda x: kpss(x.fillna(0),lags="legacy",regression='c')).T
+        a=df.apply(lambda x: kpss(x.fillna(method='ffill'),lags="legacy",regression='c')).T
     except ValueError:
             pass
     a.columns = [f'{variable_name}_kpss_test_statistic',
