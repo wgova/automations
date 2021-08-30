@@ -62,7 +62,7 @@ class ValidClust:
         method_switcher = {
             'hierarchical': AgglomerativeClustering(),
             'kmeans': KMeans(random_state=42),
-            'kmediods': KMedoids(),
+            'kmedoids': KMedoids(),
             'dbscan' : DBSCAN(),
             'optics' : OPTICS()
         }

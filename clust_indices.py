@@ -2,6 +2,7 @@
 
 import warnings
 import numpy as np
+import pandas as pd
 from packaging import version
 from pyclustering.cluster.clarans import clarans
 from pyclustering.utils import timedcall
@@ -105,18 +106,20 @@ def clarans_labels(clarans_object):
   return labels
 
 def calculate_clarans_cvi(data,initial_cluster):
-  cvi_df = pd.DataFrame(columns=['silhouette','calinski','davies','dunn'])
+  cvi_df = pd.DataFrame(columns=['inter','silhouette','davies','intra','calinski','dunn'])
   df_list = data.values.tolist()
   for k in range(initial_cluster,10):
     print(k)
     clarans_model = clarans(df_list,k,3,5)
     (_, result) =timedcall(clarans_model.process)
     labels =  clarans_labels(result)
-    sihlouette = silhouette_score(df, labels, metric='euclidean')
-    calinski = calinski_harabasz_score(df, labels)
-    davies = davies_bouldin_score(df, labels)
-    dunn_ = dunn(pairwise_distances(df),labels)
-    cvi_df.loc[k] = [sihlouette,calinski,davies,dunn_]
+    inter_dist = 	inter_distances(data, dist=None, labels=labels)
+    sihlouette = silhouette_score(data, labels, metric='euclidean')
+    calinski = calinski_harabasz_score(data, labels)
+    intra_dist = intra_distances(data, dist=None, labels=labels)
+    davies = davies_bouldin_score(data, labels)
+    dunn_ = dunn(pairwise_distances(data),labels)
+    cvi_df.loc[k] = [inter_dist,sihlouette,calinski,intra_dist,davies,dunn_]
     print(cvi_df)
     del clarans_model
   return cvi_df
