@@ -1,2 +1,2 @@
-from .indices import dunn, cop
-from .clustervalidation import ValidClust
+from .clust_indices import dunn, cop
+from .clust_validation import ValidClust
