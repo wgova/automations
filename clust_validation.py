@@ -4,13 +4,12 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn_extra.cluster import KMedoids
-from sklearn.cluster import (AgglomerativeClustering,DBSCAN,
+from sklearn.cluster import (AgglomerativeClustering, 
 KMeans,OPTICS, cluster_optics_dbscan)
 from sklearn.metrics import pairwise_distances
 from sklearn.preprocessing import normalize
 
-from .clust_indices import (_dunn, cop, _davies_bouldin_score2, _silhouette_score2,_calinski_harabaz_score2,intra_distances,inter_distances)
+from clust_indices import (_dunn, cop, _davies_bouldin_score2, _silhouette_score2,_calinski_harabaz_score2,intra_distances,inter_distances)
 
 class ValidClust:
     def __init__(self, k,
@@ -62,7 +61,7 @@ class ValidClust:
         method_switcher = {
             'hierarchical': AgglomerativeClustering(),
             'kmeans': KMeans(random_state=42),
-            'kmedoids': KMedoids(),
+            'kmediods': KMedoids(),
             'dbscan' : DBSCAN(),
             'optics' : OPTICS()
         }
@@ -75,13 +74,12 @@ class ValidClust:
         return objs
 
     def _get_index_funs(self):
-        index_fun_switcher = {
-            'silhouette': _silhouette_score2,
+        index_fun_switcher = {'inter_dist': intra_distances,
+'silhouette': _silhouette_score2,
             'davies': _davies_bouldin_score2,
             'calinski': _calinski_harabaz_score2,
             'dunn': _dunn,
             'intra_dist': intra_distances,
-            'inter_dist': intra_distances,
             'cop': cop
         }
         return {i: index_fun_switcher[i] for i in self.indices}
