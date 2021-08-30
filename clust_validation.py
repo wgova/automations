@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.cluster import (AgglomerativeClustering, 
+from sklearn_extra.cluster import KMedoids
+from sklearn.cluster import (AgglomerativeClustering,DBSCAN,
 KMeans,OPTICS, cluster_optics_dbscan)
 from sklearn.metrics import pairwise_distances
 from sklearn.preprocessing import normalize
