@@ -8,7 +8,7 @@ from sklearn.cluster import (AgglomerativeClustering,
 KMeans,OPTICS, cluster_optics_dbscan)
 from sklearn.metrics import pairwise_distances
 from sklearn.preprocessing import normalize
-import clust_indices 
+
 from clust_indices import (_dunn, cop, _davies_bouldin_score2, _silhouette_score2,_calinski_harabaz_score2,intra_distances,inter_distances)
 
 class ValidClust:
