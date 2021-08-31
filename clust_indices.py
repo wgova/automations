@@ -109,7 +109,7 @@ def clarans_labels(clarans_object):
 def calculate_clarans_cvi(data,initial_cluster,dist=None):
         cvi_df = pd.DataFrame(columns=['silhouette','calinski','davies','dunn'])
         df_list = data.values.tolist()
-        dist = pairwise_distances(data)
+        dist = np.fill_diagonal(pairwise_distances(data), 0)
         for k in range(initial_cluster,10):
             print(k)
             clarans_model = clarans(df_list,k,3,5)
