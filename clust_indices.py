@@ -45,14 +45,14 @@ def intra_distances(data=None, dist=None, labels=None):
         dist[np.ix_(labels == i, labels == i)]
         for i in clusters
     ]
+    print(type(intra_dists))
+    print(intra_dists)
     return sum(intra_dists)/len(intra_dists)
 
 def inter_distances(data=None, dist=None, labels=None):
     clusters = set(labels)
-    inter_dists = [
-        dist[np.ix_(labels == i, labels == j)]
-        for i, j in _get_clust_pairs(clusters)
-    ]
+    inter_dists = [dist[np.ix_(labels == i, labels == j)]
+        for i, j in _get_clust_pairs(clusters)]
     return sum(inter_dists)/len(inter_dists)
 
 def dunn(dist, labels):
