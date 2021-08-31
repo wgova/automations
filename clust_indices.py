@@ -106,24 +106,25 @@ def clarans_labels(clarans_object):
                         .flatten()
         return labels
 
-def calculate_clarans_cvi(self,data,initial_cluster,dist=None):
+def calculate_clarans_cvi(data,initial_cluster,dist=None):
         cvi_df = pd.DataFrame(columns=['silhouette','calinski','davies','dunn'])
         df_list = data.values.tolist()
+        dist = pairwise_distances(data)
         for k in range(initial_cluster,10):
             print(k)
             clarans_model = clarans(df_list,k,3,5)
             (_, result) =timedcall(clarans_model.process)
-            labels =  self.clarans_labels(result)
+            labels =  clarans_labels(result)
             clusters = set(labels)
             intra_dists = [dist[np.ix_(labels == i, labels == i)].max() for i in clusters]
             inter_dists = [dist[np.ix_(labels == i, labels == j)].min() for i, j in self._get_clust_pairs(clusters)]
             avg_intra_dist = sum(inter_dists)/len(inter_dists)
             avg_inter_dist =  sum(intra_dists)/len(intra_dists)
-            sihlouette = self.silhouette_score(data, labels, metric='euclidean')
-            calinski = self.calinski_harabasz_score(data, labels)
-            davies = self.davies_bouldin_score(data, labels)
-            dunn_ = self.dunn(pairwise_distances(data),labels)
-            cvi_df.loc[k] = [inter_dists,sihlouette,calinski,intra_dists,davies,dunn_]
+            sihlouette = silhouette_score(dist, labels, metric='precomputed')
+            calinski = calinski_harabasz_score(data, labels)
+            davies = davies_bouldin_score(data, labels)
+            dunn_ = dunn(dist,labels)
+            cvi_df.loc[k] = [avg_inter_dist,sihlouette,calinski,avg_intra_dist,davies,dunn_]
             print(cvi_df)
             del clarans_model
         return cvi_df
