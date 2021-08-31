@@ -117,7 +117,7 @@ def calculate_clarans_cvi(data,initial_cluster,dist=None):
             labels =  clarans_labels(result)
             clusters = set(labels)
             intra_dists = [dist[np.ix_(labels == i, labels == i)].max() for i in clusters]
-            inter_dists = [dist[np.ix_(labels == i, labels == j)].min() for i, j in self._get_clust_pairs(clusters)]
+            inter_dists = [dist[np.ix_(labels == i, labels == j)].min() for i, j in _get_clust_pairs(clusters)]
             avg_intra_dist = sum(inter_dists)/len(inter_dists)
             avg_inter_dist =  sum(intra_dists)/len(intra_dists)
             sihlouette = silhouette_score(dist, labels, metric='precomputed')
