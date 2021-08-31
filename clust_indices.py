@@ -4,6 +4,10 @@ import warnings
 import numpy as np
 import pandas as pd
 from packaging import version
+from sklearn.metrics import pairwise_distances_chunked
+from sklearn.utils import check_X_y,check_random_state
+from sklearn.preprocessing import LabelEncoder
+import functools
 from pyclustering.cluster.clarans import clarans
 from pyclustering.utils import timedcall
 from sklearn.metrics import pairwise_distances
@@ -38,20 +42,6 @@ def _dunn(data=None, dist=None, labels=None):
         for i in clusters
     ]
     return min(inter_dists) / max(intra_dists)
-
-def intra_distances(data=None, dist=None, labels=None):
-    clusters = set(labels)
-    intra_dists = [
-        dist[np.ix_(labels == i, labels == i)]
-        for i in clusters]
-    print(intra_dists)
-    return sum(intra_dists)/len(intra_dists)
-
-def inter_distances(data=None, dist=None, labels=None):
-    clusters = set(labels)
-    inter_dists = [dist[np.ix_(labels == i, labels == j)]
-        for i, j in _get_clust_pairs(clusters)]
-    return sum(inter_dists)/len(inter_dists)
 
 def dunn(dist, labels):
     return _dunn(data=None, dist=dist, labels=labels)
@@ -93,6 +83,52 @@ def _davies_bouldin_score2(data=None, dist=None, labels=None):
 def _calinski_harabaz_score2(data=None, dist=None, labels=None):
     return _cal_score(data, labels)
 
+def chunk_intra_inter_dist(D_chunk, start, labels, label_freqs):
+    # accumulate distances from each sample to each cluster
+    clust_dists = np.zeros((len(D_chunk), len(label_freqs)),
+                           dtype=D_chunk.dtype)
+    for i in range(len(D_chunk)):
+        clust_dists[i] += np.bincount(labels, weights=D_chunk[i],
+                                      minlength=len(label_freqs))
+
+    # intra_index selects intra-cluster distances within clust_dists
+    intra_index = (np.arange(len(D_chunk)), labels[start:start + len(D_chunk)])
+    # intra_clust_dists are averaged over cluster size outside this function
+    intra_clust_dists = clust_dists[intra_index]
+    # of the remaining distances we normalise and extract the minimum
+    clust_dists[intra_index] = np.inf
+    clust_dists /= label_freqs
+    inter_clust_dists = clust_dists.min(axis=1)
+    return intra_clust_dists, inter_clust_dists
+
+
+def intra_inter_distances(X, labels, *, metric='euclidean', **kwds):
+    X, labels = check_X_y(X, labels, accept_sparse=['csc', 'csr'])
+
+    # Check for non-zero diagonal entries in precomputed distance matrix
+    if metric == 'precomputed':
+        atol = np.finfo(X.dtype).eps * 100
+        if np.any(np.abs(np.diagonal(X)) > atol):
+            raise ValueError(
+                'The precomputed distance matrix contains non-zero '
+                'elements on the diagonal. Use np.fill_diagonal(X, 0).')
+
+    le = LabelEncoder()
+    labels = le.fit_transform(labels)
+    n_samples = len(labels)
+    label_freqs = np.bincount(labels)
+    check_number_of_labels(len(le.classes_), n_samples)
+    random_state = check_random_state(random_state)
+    kwds['metric'] = metric
+    reduce_func = functools.partial(chunk_intra_inter_dist,
+                                    labels=labels, label_freqs=label_freqs)
+    results = zip(*pairwise_distances_chunked(X, reduce_func=reduce_func,
+                                              **kwds))
+    intra_clust_dists, inter_clust_dists = results
+    intra_clust_dists = np.concatenate(intra_clust_dists)
+    inter_clust_dists = np.concatenate(inter_clust_dists)
+    return np.mean(intra_clust_dists),np.mean(inter_clust_dists)
+
 def clarans_labels(clarans_object):
         labels_clarans = clarans_object.get_clusters()
         labels=pd.DataFrame(labels_clarans).T.melt(var_name='clusters')\
@@ -116,10 +152,8 @@ def calculate_clarans_cvi(data,initial_cluster,dist=None):
             (_, result) =timedcall(clarans_model.process)
             labels =  clarans_labels(result)
             clusters = set(labels)
-            intra_dists = [dist[np.ix_(labels == i, labels == i)].max() for i in clusters]
-            inter_dists = [dist[np.ix_(labels == i, labels == j)].min() for i, j in _get_clust_pairs(clusters)]
-            avg_intra_dist = sum(intra_dists)/len(intra_dists)
-            avg_inter_dist =  sum(inter_dists)/len(inter_dists)
+            avg_intra_dist, avg_inter_dist = intra_inter_distances(
+                dist,labels=labels,metric='precomputed')
             sihlouette = silhouette_score(dist, labels, metric='precomputed')
             calinski = calinski_harabasz_score(data, labels)
             davies = davies_bouldin_score(data, labels)
