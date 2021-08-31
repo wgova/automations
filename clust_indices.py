@@ -43,9 +43,7 @@ def intra_distances(data=None, dist=None, labels=None):
     clusters = set(labels)
     intra_dists = [
         dist[np.ix_(labels == i, labels == i)]
-        for i in clusters
-    ]
-    print(type(intra_dists))
+        for i in clusters]
     print(intra_dists)
     return sum(intra_dists)/len(intra_dists)
 
