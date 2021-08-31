@@ -160,7 +160,7 @@ class ValidClust:
                         .flatten()
         return labels
 
-    def calculate_clarans_cvi(self,data,dist=None,initial_cluster):
+    def calculate_clarans_cvi(self,data,initial_cluster,dist=None):
         cvi_df = pd.DataFrame(columns=['silhouette','calinski','davies','dunn'])
         df_list = data.values.tolist()
         for k in range(initial_cluster,10):
