@@ -79,8 +79,8 @@ class ValidClust:
             'davies': _davies_bouldin_score2,
             'calinski': _calinski_harabaz_score2,
             'dunn': _dunn,
-            'avg_inter_dist': intra_inter_distances[0],
-            'avg_intra_dist': intra_inter_distances[1],
+            ('avg_inter_dist','avg_intra_dist'): intra_inter_distances,
+            # 'avg_intra_dist': intra_inter_distances[1],
             'cop': cop}
         return {i: index_fun_switcher[i] for i in self.indices}
 
