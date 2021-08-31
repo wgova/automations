@@ -87,7 +87,7 @@ def check_number_of_labels(n_labels, n_samples):
     if not 1 < n_labels < n_samples:
         raise ValueError("Number of labels is %d. Valid values are 2 "
                          "to n_samples - 1 (inclusive)" % n_labels)
-                         
+
 def chunk_intra_inter_dist(D_chunk, start, labels, label_freqs):
     # accumulate distances from each sample to each cluster
     clust_dists = np.zeros((len(D_chunk), len(label_freqs)),
@@ -107,13 +107,13 @@ def chunk_intra_inter_dist(D_chunk, start, labels, label_freqs):
     return intra_clust_dists, inter_clust_dists
 
 
-def intra_inter_distances(X, labels, metric='precomputed'):
-    X, labels = check_X_y(X, labels, accept_sparse=['csc', 'csr'])
+def intra_inter_distances(dist, labels, metric='precomputed'):
+    dist, labels = check_X_y(dist, labels, accept_sparse=['csc', 'csr'])
 
     # Check for non-zero diagonal entries in precomputed distance matrix
     if metric == 'precomputed':
-        atol = np.finfo(X.dtype).eps * 100
-        if np.any(np.abs(np.diagonal(X)) > atol):
+        atol = np.finfo(dist.dtype).eps * 100
+        if np.any(np.abs(np.diagonal(dist)) > atol):
             raise ValueError(
                 'The precomputed distance matrix contains non-zero '
                 'elements on the diagonal. Use np.fill_diagonal(X, 0).')
@@ -127,19 +127,19 @@ def intra_inter_distances(X, labels, metric='precomputed'):
     kwds['metric'] = metric
     reduce_func = functools.partial(chunk_intra_inter_dist,
                                     labels=labels, label_freqs=label_freqs)
-    results = zip(*pairwise_distances_chunked(X, reduce_func=reduce_func,
+    results = zip(*pairwise_distances_chunked(dist, reduce_func=reduce_func,
                                               **kwds))
     intra_clust_dists, inter_clust_dists = results
     intra_clust_dists = np.concatenate(intra_clust_dists)
     inter_clust_dists = np.concatenate(inter_clust_dists)
     return np.mean(intra_clust_dists),np.mean(inter_clust_dists)
 
-def inter_cluster_dist(X, labels):
-    _, inter_dist = intra_inter_distances(X, labels)
+def inter_cluster_dist(data=None,dist=None, labels=None):
+    _, inter_dist = intra_inter_distances(dist, labels)
     return inter_dist
 
-def intra_cluster_dist(X, labels, metric='euclidean'):
-    intra_dist, _ = intra_inter_distances(X, labels)
+def intra_cluster_dist(data=None,dist=None, labels=None):
+    intra_dist, _ = intra_inter_distances(dist, labels)
     return intra_dist
 
 
