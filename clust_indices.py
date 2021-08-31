@@ -93,33 +93,3 @@ def _davies_bouldin_score2(data=None, dist=None, labels=None):
 
 def _calinski_harabaz_score2(data=None, dist=None, labels=None):
     return _cal_score(data, labels)
-
-def clarans_labels(clarans_object):
-  labels_clarans = clarans_object.get_clusters()
-  labels=pd.DataFrame(labels_clarans).T.melt(var_name='clusters')\
-  .dropna()
-  labels['value']=labels.value.astype(int)
-  labels=labels.sort_values(['value'])\
-  .set_index('value')\
-  .values\
-  .flatten()
-  return labels
-
-def calculate_clarans_cvi(data,initial_cluster):
-  cvi_df = pd.DataFrame(columns=['inter','silhouette','davies','intra','calinski','dunn'])
-  df_list = data.values.tolist()
-  for k in range(initial_cluster,10):
-    print(k)
-    clarans_model = clarans(df_list,k,3,5)
-    (_, result) =timedcall(clarans_model.process)
-    labels =  clarans_labels(result)
-    inter_dist = 	inter_distances(data, dist=None, labels=labels)
-    sihlouette = silhouette_score(data, labels, metric='euclidean')
-    calinski = calinski_harabasz_score(data, labels)
-    intra_dist = intra_distances(data, dist=None, labels=labels)
-    davies = davies_bouldin_score(data, labels)
-    dunn_ = dunn(pairwise_distances(data),labels)
-    cvi_df.loc[k] = [inter_dist,sihlouette,calinski,intra_dist,davies,dunn_]
-    print(cvi_df)
-    del clarans_model
-  return cvi_df
