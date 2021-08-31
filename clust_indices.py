@@ -83,6 +83,11 @@ def _davies_bouldin_score2(data=None, dist=None, labels=None):
 def _calinski_harabaz_score2(data=None, dist=None, labels=None):
     return _cal_score(data, labels)
 
+def check_number_of_labels(n_labels, n_samples):
+    if not 1 < n_labels < n_samples:
+        raise ValueError("Number of labels is %d. Valid values are 2 "
+                         "to n_samples - 1 (inclusive)" % n_labels)
+                         
 def chunk_intra_inter_dist(D_chunk, start, labels, label_freqs):
     # accumulate distances from each sample to each cluster
     clust_dists = np.zeros((len(D_chunk), len(label_freqs)),
@@ -102,7 +107,7 @@ def chunk_intra_inter_dist(D_chunk, start, labels, label_freqs):
     return intra_clust_dists, inter_clust_dists
 
 
-def intra_inter_distances(X, labels, *, metric='euclidean', **kwds):
+def intra_inter_distances(X, labels, metric='precomputed'):
     X, labels = check_X_y(X, labels, accept_sparse=['csc', 'csr'])
 
     # Check for non-zero diagonal entries in precomputed distance matrix
@@ -118,7 +123,7 @@ def intra_inter_distances(X, labels, *, metric='euclidean', **kwds):
     n_samples = len(labels)
     label_freqs = np.bincount(labels)
     check_number_of_labels(len(le.classes_), n_samples)
-    random_state = check_random_state(random_state)
+    # random_state = check_random_state(random_state)
     kwds['metric'] = metric
     reduce_func = functools.partial(chunk_intra_inter_dist,
                                     labels=labels, label_freqs=label_freqs)
@@ -128,6 +133,15 @@ def intra_inter_distances(X, labels, *, metric='euclidean', **kwds):
     intra_clust_dists = np.concatenate(intra_clust_dists)
     inter_clust_dists = np.concatenate(inter_clust_dists)
     return np.mean(intra_clust_dists),np.mean(inter_clust_dists)
+
+def inter_cluster_dist(X, labels):
+    _, inter_dist = intra_inter_distances(X, labels)
+    return inter_dist
+
+def intra_cluster_dist(X, labels, metric='euclidean'):
+    intra_dist, _ = intra_inter_distances(X, labels)
+    return intra_dist
+
 
 def clarans_labels(clarans_object):
         labels_clarans = clarans_object.get_clusters()
