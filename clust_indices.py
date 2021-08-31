@@ -109,7 +109,7 @@ def clarans_labels(clarans_object):
 def calculate_clarans_cvi(data,initial_cluster,dist=None):
         cvi_df = pd.DataFrame(columns=['silhouette','calinski','davies','dunn'])
         df_list = data.values.tolist()
-        dist = np.fill_diagonal(pairwise_distances(data), 0)
+        dist_overlap = np.fill_diagonal(pairwise_distances(data), 0)
         for k in range(initial_cluster,10):
             print(k)
             clarans_model = clarans(df_list,k,3,5)
@@ -120,10 +120,10 @@ def calculate_clarans_cvi(data,initial_cluster,dist=None):
             inter_dists = [dist[np.ix_(labels == i, labels == j)].min() for i, j in _get_clust_pairs(clusters)]
             avg_intra_dist = sum(inter_dists)/len(inter_dists)
             avg_inter_dist =  sum(intra_dists)/len(intra_dists)
-            sihlouette = silhouette_score(dist, labels, metric='precomputed')
+            sihlouette = silhouette_score(dist_overlap, labels, metric='precomputed')
             calinski = calinski_harabasz_score(data, labels)
             davies = davies_bouldin_score(data, labels)
-            dunn_ = dunn(dist,labels)
+            dunn_ = dunn(dist_overlap,labels)
             cvi_df.loc[k] = [avg_inter_dist,sihlouette,calinski,avg_intra_dist,davies,dunn_]
             print(cvi_df)
             del clarans_model
