@@ -107,7 +107,7 @@ def chunk_intra_inter_dist(D_chunk, start, labels, label_freqs):
     return intra_clust_dists, inter_clust_dists
 
 
-def intra_inter_distances(dist, labels, metric='precomputed'):
+def intra_inter_distances(dist, labels, metric='precomputed', **kwds):
     dist, labels = check_X_y(dist, labels, accept_sparse=['csc', 'csr'])
 
     # Check for non-zero diagonal entries in precomputed distance matrix
