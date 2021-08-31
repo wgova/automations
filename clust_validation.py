@@ -149,7 +149,6 @@ class ValidClust:
                     1 - score_df_norm.loc[(slice(None), i), :]
         normalize(score_df_norm, norm='max', copy=False)
         return score_df_norm
-
     def clarans_labels(clarans_object):
         labels_clarans = clarans_object.get_clusters()
         labels=pd.DataFrame(labels_clarans).T.melt(var_name='clusters')\
@@ -161,39 +160,28 @@ class ValidClust:
                         .flatten()
         return labels
 
-    def calculate_clarans_cvi(self,data,initial_cluster):
-        index_funs = self._get_index_funs()
-        dist_inds = ['silhouette', 'dunn']
-
-        d_overlap = [i for i in self.indices if i in dist_inds]
-        if d_overlap:
-            dist = pairwise_distances(data)
-            np.fill_diagonal(dist, 0)
-        else:
-            dist = None
-        # indices = ['inter','silhouette','davies','intra','calinski','dunn']
-        output_df = pd.DataFrame(columns=self.k, dtype=np.float64)
+    def calculate_clarans_cvi(self,data,dist=None,initial_cluster):
+        cvi_df = pd.DataFrame(columns=['silhouette','calinski','davies','dunn'])
         df_list = data.values.tolist()
         for k in range(initial_cluster,10):
             print(k)
             clarans_model = clarans(df_list,k,3,5)
             (_, result) =timedcall(clarans_model.process)
-            labels_res =  self.clarans_labels(result)
-            scores = [index_funs[key](data, dist, labels_res)
-                    for key in self.indices]
-            print('Clustering completed:',clarans.__class__.__name__,k,'clusters')
-            output_df.loc[self.indices, k] = scores
-
-            # inter_dist = 	inter_distances(data, dist=None, labels=labels_res)
-            # sihlouette = silhouette_score(data, labels, metric='euclidean')
-            # calinski = calinski_harabasz_score(data, labels)
-            # intra_dist = intra_distances(data, dist=None, labels=labels_res)
-            # davies = davies_bouldin_score(data, labels_res)
-            # dunn_ = dunn(pairwise_distances(data),labels_res)
-            cvi_df.loc[k] = [inter_dist,sihlouette,calinski,intra_dist,davies,dunn_]
+            labels =  self.clarans_labels(result)
+            clusters = set(labels)
+            intra_dists = [dist[np.ix_(labels == i, labels == i)].max() for i in clusters]
+            inter_dists = [dist[np.ix_(labels == i, labels == j)].min() for i, j in self._get_clust_pairs(clusters)]
+            avg_intra_dist = sum(inter_dists)/len(inter_dists)
+            avg_inter_dist =  sum(intra_dists)/len(intra_dists)
+            sihlouette = self.silhouette_score(data, labels, metric='euclidean')
+            calinski = self.calinski_harabasz_score(data, labels)
+            davies = self.davies_bouldin_score(data, labels)
+            dunn_ = self.dunn(pairwise_distances(data),labels)
+            cvi_df.loc[k] = [inter_dists,sihlouette,calinski,intra_dists,davies,dunn_]
             print(cvi_df)
             del clarans_model
         return cvi_df
+
     def plot(self):
         norm_df = self._normalize()
 

@@ -4,8 +4,6 @@ import warnings
 import numpy as np
 import pandas as pd
 from packaging import version
-from pyclustering.cluster.clarans import clarans
-from pyclustering.utils import timedcall
 from pyclustering.utils import draw_clusters,average_inter_cluster_distance,average_intra_cluster_distance,average_neighbor_distance
 import sklearn
 from sklearn.metrics import (
