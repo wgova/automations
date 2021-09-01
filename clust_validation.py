@@ -36,7 +36,7 @@ class ValidClust:
                 "You must specify `affinity='euclidean'` when using the "
                 "ward linkage type")
 
-        ok_indices = ['avg_inter_dist','silhouette', 'avg_intra_dist','davies','calinski','dunn', 'cop']
+        ok_indices = ['avg_inter_dist','silhouette', 'davies','avg_intra_dist','calinski','dunn', 'cop']
         ind_aliases = {i[0:3]: i for i in ok_indices}
         indices = [ind_aliases[i] if i in ind_aliases else i for i in indices]
         for i in indices:
