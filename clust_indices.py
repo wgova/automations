@@ -107,13 +107,13 @@ def chunk_intra_inter_dist(D_chunk, start, labels, label_freqs):
     return intra_clust_dists, inter_clust_dists
 
 
-def intra_inter_distances(dist, labels, metric='precomputed', **kwds):
-    dist, labels = check_X_y(dist, labels, accept_sparse=['csc', 'csr'])
+def intra_inter_distances(X, labels, metric='precomputed', **kwds):
+    X, labels = check_X_y(X, labels, accept_sparse=['csc', 'csr'])
 
     # Check for non-zero diagonal entries in precomputed distance matrix
     if metric == 'precomputed':
-        atol = np.finfo(dist.dtype).eps * 100
-        if np.any(np.abs(np.diagonal(dist)) > atol):
+        atol = np.finfo(X.dtype).eps * 100
+        if np.any(np.abs(np.diagonal(X)) > atol):
             raise ValueError(
                 'The precomputed distance matrix contains non-zero '
                 'elements on the diagonal. Use np.fill_diagonal(X, 0).')
@@ -127,7 +127,7 @@ def intra_inter_distances(dist, labels, metric='precomputed', **kwds):
     kwds['metric'] = metric
     reduce_func = functools.partial(chunk_intra_inter_dist,
                                     labels=labels, label_freqs=label_freqs)
-    results = zip(*pairwise_distances_chunked(dist, reduce_func=reduce_func,
+    results = zip(*pairwise_distances_chunked(X, reduce_func=reduce_func,
                                               **kwds))
     intra_clust_dists, inter_clust_dists = results
     intra_clust_dists = np.concatenate(intra_clust_dists)
@@ -166,11 +166,11 @@ def calculate_clarans_cvi(data,initial_cluster,dist=None):
             (_, result) =timedcall(clarans_model.process)
             labels =  clarans_labels(result)
             clusters = set(labels)
-            avg_inter_dist = inter_cluster_dist(dist,labels=labels)
+            avg_inter_dist = inter_cluster_dist(data,labels=labels)
             sihlouette = silhouette_score(dist, labels)
             davies = davies_bouldin_score(data, labels)
             calinski = calinski_harabasz_score(data, labels)
-            avg_intra_dist = intra_cluster_dist(dist,labels=labels)
+            avg_intra_dist = intra_cluster_dist(data,labels=labels)
             dunn_ = dunn(dist,labels)
             cvi_df.loc[k] = [avg_inter_dist,sihlouette,
             davies,calinski,avg_intra_dist,dunn_]
