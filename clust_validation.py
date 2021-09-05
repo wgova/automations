@@ -140,9 +140,6 @@ class ClusterValidation:
         normalize(score_df_norm, norm='max', copy=False)
         return score_df_norm
     
-
-    
-
     def plot(self):
         norm_df = self._normalize()
 
