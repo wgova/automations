@@ -18,7 +18,7 @@ from .clust_indices import (_dunn, intra_cluster_dist,inter_cluster_dist,
 cop, _davies_bouldin_score2, _silhouette_score2,_calinski_harabaz_score2,
 intra_inter_distances)
 
-class ValidClust:
+class ClusterValidation:
     def __init__(self, k,
                  # No big deal that these are lists (i.e., mutable), given that
                  # we don't mutate them inside the class.

@@ -6,23 +6,23 @@ with open(path.join(this_directory, 'README.md')) as f:
     long_description = f.read()
 
 setup(
-    name='validclust',
+    name='ClusterValidation',
     version='0.1.1',
     description='Validate clustering results',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author='Christopher Baker',
-    author_email='chriscrewbaker@gmail.com',
-    url='https://validclust.readthedocs.io',
+    author='Webster Gova',
+    author_email='webgster@yahoo.com',
     license='LICENSE.txt',
-    packages=['validclust'],
     install_requires=[
         'scikit-learn',
         'pandas',
         'numpy>=1.16.5',
         'seaborn',
         'matplotlib',
-        'packaging'
+        'packaging',
+        'pyclustering',
+        'sklearn_extra'
     ],
     tests_require='pytest',
     setup_requires='pytest-runner',
