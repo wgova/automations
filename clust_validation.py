@@ -68,7 +68,7 @@ class ClusterValidation:
             'kmedoids': KMedoids(random_state=0),
             'dbscan' : DBSCAN(),
             'optics' : OPTICS(),
-            'clarans':clarans(data=None,k=None,numlocal=3, maxneighbor=5)}
+            'clarans':clarans(data=None,number_clusters=None,numlocal=3, maxneighbor=5)}
         objs = {i: method_switcher[i] for i in self.methods}
         for key, value in objs.items():
             if key == 'hierarchical':
