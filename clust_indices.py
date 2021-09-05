@@ -118,10 +118,7 @@ def intra_cluster_dist(data=None, dist=None, labels=None):
     intra_dist, _ = cluster_distances(dist, labels, metric='precomputed')
     return intra_dist
 
-def cluster_distances(X, labels, *, metric='precomputed', sample_size=None,random_state=None, **kwds):
-    random_state = check_random_state(random_state)
-    indices = random_state.permutation(X.shape[0])[:sample_size]
-    X, labels = X[indices].T[indices].T, labels[indices]
+def cluster_distances(X, labels, *, metric='precomputed', random_state=None, **kwds):
     return intra_inter_distances(X, labels, metric=metric, **kwds)
 
 def intra_inter_distances(X, labels, metric='precomputed'):
