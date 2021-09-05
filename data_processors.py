@@ -51,7 +51,8 @@ def get_date_int(df, date_column):
 
 
 def days_diff(df):
-	return df["days_since"] = (df["date_col2"] - df["date_col1"]).dt.days
+	df["days_since"] = (df["date_col2"] - df["date_col1"]).dt.days
+	return df
 
 def calculate_time_difference(df, date_col2, date_col1):
     """
