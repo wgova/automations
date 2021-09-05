@@ -28,7 +28,7 @@ def clean_header(df):
     return df
 
 
-def change_column_prefix(df, old_prefix="export_val__", new_prefix=None):
+def change_column_prefix(df, old_prefix, new_prefix=None):
     if new_prefix == None:
         df.columns = [re.sub(f"^{old_prefix}", "", x) for x in df.columns]
     else:
@@ -51,8 +51,7 @@ def get_date_int(df, date_column):
 
 
 def days_diff(df):
-    df["days_since"] = (df["date_col2"] - df["date_col1"]).dt.days
-
+	return df["days_since"] = (df["date_col2"] - df["date_col1"]).dt.days
 
 def calculate_time_difference(df, date_col2, date_col1):
     """
