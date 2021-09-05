@@ -11,12 +11,14 @@ from sklearn.cluster import (
     KMeans,
     OPTICS, 
     cluster_optics_dbscan)
+from pyclustering.cluster.clarans import clarans
+from pyclustering.utils import timedcall
 from sklearn.metrics import pairwise_distances
 from sklearn.preprocessing import normalize
 
 from .clust_indices import (_dunn, intra_cluster_dist,inter_cluster_dist,
 cop, _davies_bouldin_score2, _silhouette_score2,_calinski_harabaz_score2,
-intra_inter_distances)
+intra_inter_distances,clarans_labels)
 
 class ClusterValidation:
     def __init__(self, k,
@@ -65,13 +67,16 @@ class ClusterValidation:
             'kmeans': KMeans(random_state=42),
             'kmedoids': KMedoids(random_state=0),
             'dbscan' : DBSCAN(),
-            'optics' : OPTICS()}
+            'optics' : OPTICS(),
+            'clarans':clarans()}
         objs = {i: method_switcher[i] for i in self.methods}
         for key, value in objs.items():
             if key == 'hierarchical':
                 value.set_params(linkage=self.linkage, affinity=self.affinity)
             if key == 'dbscan':
-                value.set_params(eps=0.15)
+                value.set_params(min_samples=10)
+            if key == 'clarans':
+                value.set_params(numlocal=3, maxneighbor=5)
         return objs
 
     def _get_index_funs(self):
@@ -108,12 +113,18 @@ class ClusterValidation:
           try:  
             for alg_name, alg_obj in method_objs.items():
                 if alg_name == 'dbscan':
-                  alg_obj.set_params(eps=(0.1*k), min_samples=10)
+                  alg_obj.set_params(eps=(0.1*k))
                 elif alg_name =='optics':
                   alg_obj.set_params(min_samples=k)
+                elif alg_name == 'clarans':
+                    alg_obj.set_params(data=data.values.tolist(),number_clusters=k)
                 else:
                   alg_obj.set_params(n_clusters=k)
-                labels = alg_obj.fit_predict(data)
+                if alg_name == 'clarans':
+                    (_, result) =timedcall(alg_obj.process)
+                    labels = clarans_labels(result)
+                else:
+                    labels = alg_obj.fit_predict(data)
                 # have to iterate over self.indices here so that ordering of
                 # validity indices is same in scores list as it is in output_df
                 scores = [index_funs[key](data, dist, labels)
