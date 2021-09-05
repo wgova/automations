@@ -75,8 +75,6 @@ class ClusterValidation:
                 value.set_params(linkage=self.linkage, affinity=self.affinity)
             if key == 'dbscan':
                 value.set_params(min_samples=10)
-            if key == 'clarans':
-                value.set_params(numlocal=3, maxneighbor=5)
         return objs
 
     def _get_index_funs(self):
@@ -117,11 +115,11 @@ class ClusterValidation:
                 elif alg_name =='optics':
                   alg_obj.set_params(min_samples=k)
                 elif alg_name == 'clarans':
-                    alg_obj.set_params(data=data.values.tolist(),number_clusters=k)
+                    alg_obj = clarans(data=data.values.tolist(),number_clusters=k,numlocal=3, maxneighbor=5)
+                    (_, result) =timedcall(alg_obj.process)
                 else:
                   alg_obj.set_params(n_clusters=k)
                 if alg_name == 'clarans':
-                    (_, result) =timedcall(alg_obj.process)
                     labels = clarans_labels(result)
                 else:
                     labels = alg_obj.fit_predict(data)
