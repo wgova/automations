@@ -10,14 +10,17 @@ from sklearn.preprocessing import LabelEncoder
 import functools
 from pyclustering.cluster.clarans import clarans
 from pyclustering.utils import timedcall
-from sklearn.metrics import pairwise_distances
+from sklearn.metrics.cluster.unsupervised import _silhouette_reduce
 from pyclustering.utils import (draw_clusters,
 average_inter_cluster_distance,
 average_intra_cluster_distance,
 average_neighbor_distance)
 import sklearn
-from sklearn.metrics import (
-    davies_bouldin_score, _silhouette_reduce,silhouette_score, pairwise_distances,calinski_harabasz_score
+from sklearn.metrics import (davies_bouldin_score,
+_silhouette_reduce,
+silhouette_score, 
+pairwise_distances,
+calinski_harabasz_score
 )
 
 # They changed the name of calinski_harabaz_score in later version of sklearn:
