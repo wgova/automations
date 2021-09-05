@@ -16,7 +16,6 @@ average_intra_cluster_distance,
 average_neighbor_distance)
 import sklearn
 from sklearn.metrics import (davies_bouldin_score,
-_silhouette_reduce,
 silhouette_score, 
 pairwise_distances,
 calinski_harabasz_score
@@ -93,6 +92,24 @@ def check_number_of_labels(n_labels, n_samples):
         raise ValueError("Number of labels is %d. Valid values are 2 "
                          "to n_samples - 1 (inclusive)" % n_labels)
 
+def cluster_dist_reduce(D_chunk, start, labels, label_freqs):
+    # accumulate distances from each sample to each cluster
+    clust_dists = np.zeros((len(D_chunk), len(label_freqs)),
+                           dtype=D_chunk.dtype)
+    for i in range(len(D_chunk)):
+        clust_dists[i] += np.bincount(labels, weights=D_chunk[i],
+                                      minlength=len(label_freqs))
+
+    # intra_index selects intra-cluster distances within clust_dists
+    intra_index = (np.arange(len(D_chunk)), labels[start:start + len(D_chunk)])
+    # intra_clust_dists are averaged over cluster size outside this function
+    intra_clust_dists = clust_dists[intra_index]
+    # of the remaining distances we normalise and extract the minimum
+    clust_dists[intra_index] = np.inf
+    clust_dists /= label_freqs
+    inter_clust_dists = clust_dists.min(axis=1)
+    return intra_clust_dists, inter_clust_dists
+
 def inter_cluster_dist(data=None, dist=None, labels=None):
     _, inter_dist = cluster_distances(dist, labels, metric='precomputed')
     return inter_dist
@@ -130,7 +147,7 @@ def intra_inter_distances(X, labels, metric='precomputed'):
     label_freqs = np.bincount(labels)
     check_number_of_labels(len(le.classes_), n_samples)
 
-    reduce_func = functools.partial(_silhouette_reduce,
+    reduce_func = functools.partial(cluster_dist_reduce,
                                     labels=labels, label_freqs=label_freqs)
     results = zip(*pairwise_distances_chunked(X, reduce_func=reduce_func))
     intra_clust_dists, inter_clust_dists = results
