@@ -119,23 +119,15 @@ def intra_cluster_dist(data=None, dist=None, labels=None):
     return intra_dist
 
 def cluster_distances(X, labels, *, metric='precomputed', sample_size=None,random_state=None, **kwds):
-    if sample_size is not None:
-        X, labels = check_X_y(X, labels, accept_sparse=['csc', 'csr'])
-        random_state = check_random_state(random_state)
-        indices = random_state.permutation(X.shape[0])[:sample_size]
-        if metric == "precomputed":
-            X, labels = X[indices].T[indices].T, labels[indices]
-        else:
-            X, labels = X[indices], labels[indices]
+    random_state = check_random_state(random_state)
+    indices = random_state.permutation(X.shape[0])[:sample_size]
+    X, labels = X[indices].T[indices].T, labels[indices]
     return intra_inter_distances(X, labels, metric=metric, **kwds)
 
 def intra_inter_distances(X, labels, metric='precomputed'):
-    X, labels = check_X_y(X, labels, accept_sparse=['csc', 'csr'])
-
     # Check for non-zero diagonal entries in precomputed distance matrix
-    if metric == 'precomputed':
-        atol = np.finfo(X.dtype).eps * 100
-        if np.any(np.abs(np.diagonal(X)) > atol):
+    atol = np.finfo(X.dtype).eps * 100
+    if np.any(np.abs(np.diagonal(X)) > atol):
             raise ValueError(
                 'The precomputed distance matrix contains non-zero '
                 'elements on the diagonal. Use np.fill_diagonal(X, 0).'
