@@ -14,7 +14,6 @@ setup(
     author='Webster Gova',
     author_email='webgster@yahoo.com',
     license='LICENSE.txt',
-    packages=['validclust'],
     install_requires=[
         'scikit-learn',
         'pandas',
