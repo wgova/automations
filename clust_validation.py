@@ -68,7 +68,7 @@ class ClusterValidation:
             'hierarchical': AgglomerativeClustering(),
             'kmeans': KMeans(random_state=random_state),
             'kmedoids': KMedoids(random_state=random_state,method='pam'),
-            'clara': CLARA(method='pam'),
+            'clara': CLARA(method='pam',max_iter=3000),
             'clarans':clarans(data=[0,0,1],number_clusters=2,numlocal=3, maxneighbor=5),
             'dbscan' : DBSCAN(),
             'optics' : OPTICS(),
