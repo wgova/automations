@@ -166,12 +166,11 @@ def calculate_clarans_cvi(data,initial_cluster,dist=None):
             clarans_model = clarans(df_list,k,3,5)
             (_, result) =timedcall(clarans_model.process)
             labels =  clarans_labels(result)
-            clusters = set(labels)
-            avg_inter_dist = inter_cluster_dist(dist=dist,labels=labels)
+            # avg_inter_dist = inter_cluster_dist(dist=dist,labels=labels)
             sihlouette = silhouette_score(dist=dist, labels=labels)
             davies = davies_bouldin_score(data, labels)
             calinski = calinski_harabasz_score(data, labels)
-            avg_intra_dist = intra_cluster_dist(dist=dist,labels=labels)
+            # avg_intra_dist = intra_cluster_dist(dist=dist,labels=labels)
             dunn_ = dunn(dist,labels)
             cvi_df.loc[k] = [avg_inter_dist,sihlouette,
             davies,calinski,avg_intra_dist,dunn_]

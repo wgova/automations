@@ -1,10 +1,12 @@
 import re
-
+import time
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn_extra.cluster import KMedoids
+from sklearn_extra.cluster import (
+    KMedoids,
+    CLARA)
 from sklearn.cluster import (
     AgglomerativeClustering,
     DBSCAN,
@@ -21,12 +23,10 @@ cop, _davies_bouldin_score2, _silhouette_score2,_calinski_harabaz_score2,
 intra_inter_distances,clarans_labels)
 
 class ClusterValidation:
-    def __init__(self, k,
-                 # No big deal that these are lists (i.e., mutable), given that
-                 # we don't mutate them inside the class.
-                 indices=['avg_inter_dist','silhouette', 'avg_intra_dist','davies',
+    def __init__(self, k,random_state,
+                indices=['avg_inter_dist','silhouette', 'avg_intra_dist','davies',
                  'calinski','dunn'],
-                 methods=['hierarchical', 'kmeans','kmedoids','dbscan','optics'],
+                 methods=['kmeans','kmedoids','clara','clarans','hierarchical','dbscan','optics'],
                  linkage='ward', affinity='euclidean'):
 
         k, indices, methods = (
@@ -39,7 +39,7 @@ class ClusterValidation:
                 "ward linkage type")
 
         ok_indices = ['avg_inter_dist','silhouette', 'davies','avg_intra_dist','calinski','dunn', 'cop']
-        ind_aliases = {i[0:3]: i for i in ok_indices}
+        ind_aliases = {i[0:6]: i for i in ok_indices}
         indices = [ind_aliases[i] if i in ind_aliases else i for i in indices]
         for i in indices:
             if i not in ok_indices:
@@ -51,6 +51,7 @@ class ClusterValidation:
         self.linkage = linkage
         self.affinity = affinity
         self.score_df = None
+        self.random_state=random_state
 
     def __repr__(self):
         argspec = [
@@ -62,13 +63,16 @@ class ClusterValidation:
         return 'ValidClust(\n' + argspec + '\n)'
 
     def _get_method_objs(self):
+        random_state = 44
         method_switcher = {
             'hierarchical': AgglomerativeClustering(),
-            'kmeans': KMeans(random_state=42),
-            'kmedoids': KMedoids(random_state=0),
+            'kmeans': KMeans(random_state=random_state),
+            'kmedoids': KMedoids(random_state=random_state,method='pam'),
+            'clara': CLARA(method='pam'),
+            'clarans':clarans(data=[0,0,1],number_clusters=2,numlocal=3, maxneighbor=5),
             'dbscan' : DBSCAN(),
             'optics' : OPTICS(),
-            'clarans':clarans(data=[0,0,1],number_clusters=2,numlocal=3, maxneighbor=5)}
+            }
         objs = {i: method_switcher[i] for i in self.methods}
         for key, value in objs.items():
             if key == 'hierarchical':
@@ -108,26 +112,26 @@ class ClusterValidation:
         )
 
         for k in self.k:
+          init_time = time.time()
           try:  
             for alg_name, alg_obj in method_objs.items():
                 if alg_name == 'dbscan':
                   alg_obj.set_params(eps=(0.1*k))
                 elif alg_name =='optics':
-                  alg_obj.set_params(min_samples=k)
+                  alg_obj.set_params(max_eps=0.1*k)
                 elif alg_name == 'clarans':
                     alg_obj = clarans(data=data.values.tolist(),number_clusters=k,numlocal=3, maxneighbor=5)
                     (_, result) =timedcall(alg_obj.process)
-                else:
-                  alg_obj.set_params(n_clusters=k)
-                if alg_name == 'clarans':
                     labels = clarans_labels(result)
                 else:
-                    labels = alg_obj.fit_predict(data)
+                  alg_obj.set_params(n_clusters=k)
+                  labels = alg_obj.fit_predict(data)
                 # have to iterate over self.indices here so that ordering of
                 # validity indices is same in scores list as it is in output_df
                 scores = [index_funs[key](data, dist, labels)
                     for key in self.indices]
-                print('Clustering completed',alg_name,k,'clusters')
+                computation_time = time.time() - init_time
+                print('Clustering completed',alg_name,k,'clusters\n', 'Time',computation_time)
                 output_df.loc[(alg_name, self.indices), k] = scores
           except ValueError:
             print('Failed',alg_name,k)
