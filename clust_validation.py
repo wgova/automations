@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn_extra.cluster import (
-    KMedoids,
-    CLARA)
+from sklearn_extra.cluster import (KMedoids,
+    # CLARA
+    )
 from sklearn.cluster import (
     AgglomerativeClustering,
     DBSCAN,
@@ -26,7 +26,7 @@ class ClusterValidation:
     def __init__(self, k,random_state,
                 indices=['avg_inter_dist','silhouette', 'avg_intra_dist','davies',
                  'calinski','dunn'],
-                 methods=['kmeans','kmedoids','clara','clarans','hierarchical','dbscan','optics'],
+                 methods=['kmeans','kmedoids','clarans','hierarchical','dbscan','optics'],
                  linkage='ward', affinity='euclidean'):
 
         k, indices, methods = (
@@ -68,7 +68,7 @@ class ClusterValidation:
             'hierarchical': AgglomerativeClustering(),
             'kmeans': KMeans(random_state=random_state),
             'kmedoids': KMedoids(random_state=random_state,method='pam'),
-            'clara': CLARA(method='pam',max_iter=3000),
+            # 'clara': CLARA(method='pam',max_iter=3000),
             'clarans':clarans(data=[0,0,1],number_clusters=2,numlocal=3, maxneighbor=5),
             'dbscan' : DBSCAN(),
             'optics' : OPTICS(),
