@@ -63,7 +63,7 @@ class ClusterValidation:
         return 'ValidClust(\n' + argspec + '\n)'
 
     def _get_method_objs(self):
-        random_state = 44
+        
         method_switcher = {
             'hierarchical': AgglomerativeClustering(),
             'kmeans': KMeans(random_state=random_state),
@@ -115,14 +115,16 @@ class ClusterValidation:
           init_time = time.time()
           try:  
             for alg_name, alg_obj in method_objs.items():
-                if alg_name == 'dbscan':
-                  alg_obj.set_params(eps=(0.1*k))
-                elif alg_name =='optics':
-                  alg_obj.set_params(max_eps=0.1*k)
-                elif alg_name == 'clarans':
+                if alg_name == 'clarans':
                     alg_obj = clarans(data=data.values.tolist(),number_clusters=k,numlocal=3, maxneighbor=5)
                     (_, result) =timedcall(alg_obj.process)
                     labels = clarans_labels(result)
+                elif alg_name == 'dbscan':
+                  alg_obj.set_params(eps=(0.1*k))
+                  labels = alg_obj.fit_predict(data)
+                elif alg_name =='optics':
+                  alg_obj.set_params(max_eps=0.1*k)
+                  labels = alg_obj.fit_predict(data)
                 else:
                   alg_obj.set_params(n_clusters=k)
                   labels = alg_obj.fit_predict(data)
