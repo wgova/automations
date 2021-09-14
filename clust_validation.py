@@ -63,11 +63,11 @@ class ClusterValidation:
         return 'ValidClust(\n' + argspec + '\n)'
 
     def _get_method_objs(self):
-        
+        random_state=44
         method_switcher = {
             'hierarchical': AgglomerativeClustering(),
-            'kmeans': KMeans(random_state=random_state),
-            'kmedoids': KMedoids(random_state=random_state,method='pam'),
+            'kmeans': KMeans(random_state),
+            'kmedoids': KMedoids(random_state,method='pam'),
             # 'clara': CLARA(method='pam',max_iter=3000),
             'clarans':clarans(data=[0,0,1],number_clusters=2,numlocal=3, maxneighbor=5),
             'dbscan' : DBSCAN(),
