@@ -21,3 +21,15 @@ def sitc_codes_to_sectors(df,sitc_code_column:'int64'):
     'miscellaneous_manufactured_articles','commodities_and_other_transactions']
     df['sectors'] = np.select(conditions,choices,default='miscellaneous_unspecified')
     return df
+
+def country_name_changes(df,sitc_code_column):
+    '''
+    Country name changes sometime not updated across all databases. This list is inexhaustive. 
+    '''
+    dict_names = {'ddr':'deu','fdr':'deu','sun':'rus','csk':'cze','ymd':'yem','yar':'yem'}
+    if len(df[df.origin.isin(dict_names.keys())]) != 0:
+        df[sitc_code_column]= df[sitc_code_column].map(dict_names)\
+            .fillna(df[sitc_code_column])
+        print("Multiple country codes fixed")
+    else:
+        print("No country codes fixed")
