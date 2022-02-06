@@ -2,9 +2,6 @@ import time
 import numpy as np
 import pandas as pd
 from functools import reduce
-df['filled_col'] = df.groupby(['colA','colB'])['targetcol'].transform(
-    lambda grp: grp.fillna(np.mean(grp))
-)
 
 
 #Group by names_category and reindex to the whole date range
@@ -15,8 +12,8 @@ def add_missing_years(grp):
     del _['names_category']
     return _
 # Group by country name and extend
-df = df.groupby('names_category').apply(add_missing_years)
-df = df.reset_index()
+# df = df.groupby('names_category').apply(add_missing_years)
+# df = df.reset_index()
 
 # Interpolate for years between and extrapolate for years outside the range for 
 # which we have observations on a per-country basis
@@ -29,9 +26,13 @@ def fill_missing(grp,fill_limit):
     del res['names_category']
     return res
 # Group by names_category and fill missing
-df = df.groupby(['names_category']).apply(
-    lambda grp: fill_missing(grp)
-)
+# df = df.groupby(['names_category']).apply(
+#     lambda grp: fill_missing(grp)
+# )
+
+# df['filled_col'] = df.groupby(['colA','colB'])['targetcol'].transform(
+#     lambda grp: grp.fillna(np.mean(grp))
+# )
 
 def create_date_features(df):
     df['month'] = df.date.dt.month
