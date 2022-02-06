@@ -263,7 +263,11 @@ def scale_features(df):
     )
     return scaled_df
 
-
+def create_pivot_table(data,index_column,column_with_exporters,column_with_values):
+       table_df = pd.pivot_table(data,
+               index=index_column,columns=column_with_exporters,
+               values=column_with_values,aggfunc=np.sum)
+       return table_df
 # Inspired by:
 # https://towardsdatascience.com/creating-python-functions-for-exploratory-data-analysis-and-data-cleaning-2c462961bd71
 # https://towardsdatascience.com/automate-boring-tasks-with-your-own-functions-a32785437179
