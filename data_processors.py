@@ -3,9 +3,11 @@ import re
 import pandas as pd
 import numpy as np
 from scipy.stats.mstats import winsorize
+from functools import reduce
 from sklearn.preprocessing import Binarizer, LabelEncoder
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler, StandardScaler
 from sklearn.impute import SimpleImputer
+from data_processors import merge_df_list
 
 # test dataset
 # data = pd.read_csv("sample_ts_data.csv")
@@ -248,8 +250,7 @@ def transform_categorical_to_numercial(df, categorical_numerical_mapping):
     """
     transformers = {
         k: categorical_to_ordinal_transformer(v)
-        for k, v in categorical_numerical_mapping.items()
-    }
+        for k, v in categorical_numerical_mapping.items()}
     new_df = df.copy()
     for col, transformer in transformers.items():
         new_df[col] = new_df[col].map(transformer).astype("int64")
@@ -268,6 +269,11 @@ def create_pivot_table(data,index_column,column_with_exporters,column_with_value
                index=index_column,columns=column_with_exporters,
                values=column_with_values,aggfunc=np.sum)
        return table_df
+
+def merge_df_list(df_list,merge_dimension):
+      return reduce(lambda  left,right: pd.merge(
+      left,right,on=[merge_dimension],how='outer'), df_list).reset_index()
+
 # Inspired by:
 # https://towardsdatascience.com/creating-python-functions-for-exploratory-data-analysis-and-data-cleaning-2c462961bd71
 # https://towardsdatascience.com/automate-boring-tasks-with-your-own-functions-a32785437179

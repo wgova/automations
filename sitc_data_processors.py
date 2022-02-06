@@ -91,6 +91,9 @@ def detrend_ts_data(dframe):
     frames = [exports_data,diff1_data,diff2_data,log_data,log_diff1_data]
     transforms_merged = reduce(lambda  left,right: pd.merge(
         left,right,on=['year','exporter'],how='outer'), frames)
+    transforms_merged = transforms_merged[transforms_merged['export_value'].notna()]
+    transforms_merged=transforms_merged.replace([np.inf, -np.inf], np.nan, inplace=True)
+    transforms_merged=transforms_merged.fillna(0)
     return transforms_merged
 
 def prefix_origin_to_sitc(df,country_code_column,sitc_column):
