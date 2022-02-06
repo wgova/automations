@@ -2,6 +2,22 @@ import numpy as np
 import pandas as pd
 from functools import reduce
 
+import statsmodels.api as sm
+from statsmodels.tsa.stattools import kpss
+from statsmodels.tsa.stattools import adfuller
+
+import tsfresh
+from tsfresh import extract_features, select_features
+from tsfresh import defaults
+from tsfresh.feature_extraction import feature_calculators
+from tsfresh.feature_extraction.settings import ComprehensiveFCParameters
+from tsfresh.utilities import dataframe_functions, profiling
+from tsfresh.utilities.distribution import MapDistributor, MultiprocessingDistributor,DistributorBaseClass
+from tsfresh.utilities.string_manipulation import convert_to_output_format
+from tsfresh.feature_extraction.settings import EfficientFCParameters
+from tsfresh.utilities.dataframe_functions import roll_time_series
+import nolds #Hurst hypothesis
+
 def sitc_codes_to_sectors(df,sitc_code_column):
     '''
     Allocate sectors to SITC codes
@@ -50,7 +66,7 @@ def country_name_changes(df,sitc_code_column):
     else:
         print("No country codes fixed")
 
-def transform_data(dframe):
+def detrend_ts_data(dframe):
     '''
     input: pivot export data, indexed by year
     output: log transformed and differenced data sets
@@ -77,7 +93,14 @@ def transform_data(dframe):
         left,right,on=['year','exporter'],how='outer'), frames)
     return transforms_merged
 
-def combine_country_code(df,country_code_column,sitc_column):
+def prefix_origin_to_sitc(df,country_code_column,sitc_column):
     df['exporter'] = df[[country_code_column,sitc_column]].apply(
         func=(lambda row: '_'.join(row.values.astype(str))), axis=1)
     return df
+
+def extract_ts_features(df,time_col, name_col,value_col,feature_calculator):
+    features = extract_features(df[[time_col, name_col,value_col]],
+                     column_id=name_col, column_sort=time_col,
+                     column_kind=None, column_value=None,
+                     default_fc_parameters=feature_calculator)
+    return features   
