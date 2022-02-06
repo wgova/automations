@@ -78,6 +78,6 @@ def transform_data(dframe):
     return transforms_merged
 
 def combine_country_code(df,country_code_column,sitc_column):
-    df['exporter'] = df[country_code_column,sitc_column].apply(
+    df['exporter'] = df[[country_code_column,sitc_column]].apply(
         func=(lambda row: '_'.join(row.values.astype(str))), axis=1)
     return df
