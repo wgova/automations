@@ -72,7 +72,7 @@ def transform_data(dframe):
     exports_data = dframe\
         .reset_index()\
         .melt(id_vars='year',var_name = 'exporter',value_name='export_value')
-    frames = [exports_data,log_data,diff1_data,diff2_data,log_diff1_data]
+    frames = [exports_data,diff1_data,diff2_data,log_data,log_diff1_data]
     transforms_merged = reduce(lambda  left,right: pd.merge(
         left,right,on=['year','exporter'],how='outer'), frames)
     return transforms_merged
