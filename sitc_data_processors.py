@@ -26,11 +26,16 @@ def sitc_codes_to_sectors(df,sitc_code_column):
             df[sitc_code_column]<7000,
             df[sitc_code_column]<7940,
             df[sitc_code_column]<9000,
-            df[sitc_code_column]<9710]
+            df[sitc_code_column]<9710,
+            df[sitc_code_column] == 'travel',
+            df[sitc_code_column] == 'transport', 
+            df[sitc_code_column] == 'ict', 
+            df[sitc_code_column] == 'financial']
     choices = ['food_animals','beverages_tobacco','crude_materials_inedibles','mineral_fuels_lubricants',
     'animals_vegetable_oils','chemicals_products','manufactured_goods','machinery_and_transport',
-    'miscellaneous_manufactured_articles','commodities_and_other_transactions']
-    df['sectors'] = np.select(conditions,choices,default='miscellaneous_unspecified')
+    'miscellaneous_manufactured_articles','commodities_and_other_transactions','travel',
+    'transport', 'ict', 'financial']
+    df['sectors'] = np.select(conditions,choices,default='unspecified')
     return df
 
 def country_name_changes(df,sitc_code_column):
@@ -71,3 +76,8 @@ def transform_data(dframe):
     transforms_merged = reduce(lambda  left,right: pd.merge(
         left,right,on=['year','exporter'],how='outer'), frames)
     return transforms_merged
+
+def combine_country_code(df,country_code_column,sitc_column):
+    df['exporter'] = df[country_code_column,sitc_column].apply(
+        func=(lambda row: '_'.join(row.values.astype(str))), axis=1)
+    return df
