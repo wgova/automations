@@ -6,15 +6,15 @@ def sitc_codes_to_sectors(df,sitc_code_column):
     '''
     Allocate sectors to SITC codes
     sitc_code_column: integer codes
-    sector_0: food_animals - 0990
-    sector_1: beverages_tobacco - 1223
-    sector_2:'crude_materials_inedibles',2930
-    sector_3':'mineral_fuels_lubricants',3511
-    sector_4:'animals_vegetable_oils',4315
-    sector_5:'chemicals_products',6000
-    sector_6:'manufactured_goods',7000
-    sector_7:'machinery_and_transport',7940
-    sector_8:'miscellaneous_manufactured_articles',9000
+    sector_0: food_animals - 09
+    sector_1: beverages_tobacco - 12
+    sector_2:'crude_materials_inedibles',29
+    sector_3':'mineral_fuels_lubricants',35
+    sector_4:'animals_vegetable_oils',43
+    sector_5:'chemicals_products',59
+    sector_6:'manufactured_goods',69
+    sector_7:'machinery_and_transport',79
+    sector_8:'miscellaneous_manufactured_articles',89
     sector_9:'commodities_and_other_transactions',97
     '''
     conditions=[df[sitc_code_column]<990,
@@ -70,4 +70,4 @@ def transform_data(dframe):
     frames = [exports_data,log_data,diff1_data,diff2_data,log_diff1_data]
     transforms_merged = reduce(lambda  left,right: pd.merge(
         left,right,on=['year','exporter'],how='outer'), frames)
-  return transforms_merged
+    return transforms_merged
