@@ -3,7 +3,7 @@ import pandas as pd
 import statsmodels.api as sm
 from statsmodels.tsa.stattools import kpss
 from statsmodels.tsa.stattools import adfuller
-from data_processors import merge_df_list
+from .data_processors import merge_df_list
 
 # normality test
 def shapiro_wilk_test(data, alpha=0.05):
