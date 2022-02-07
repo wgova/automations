@@ -54,7 +54,7 @@ def adf_test_ts_columns(df,variable_name):
 def kpss_test_ts_columns(df,variable_name):
     try:
       #Differenced time series have negative values therefore infinite intermediates that cannot be converted to int during 'auto' lag
-        a=df.apply(lambda x: kpss(x.fillna(method='ffill'),nlags="auto",regression='c')).T
+        a=df.apply(lambda x: kpss(x.fillna(method='ffill'),nlags="legacy",regression='c')).T
     except ValueError:
             pass
     a.columns = [f'{variable_name}_kpss_test_statistic',
