@@ -106,4 +106,6 @@ def extract_ts_features(df,time_col, name_col,value_col,feature_calculator):
                      column_id=name_col, column_sort=time_col,
                      column_kind=None, column_value=None,
                      default_fc_parameters=feature_calculator)
-    return features   
+    return features
+
+  
