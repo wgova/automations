@@ -51,26 +51,34 @@ def adf_test_ts_columns(df,variable_name):
   print(f'Completed tests for {variable_name}')
   return d
 
-def kpss_test_ts_columns(df,variable_name):
-    try:
-      #Differenced time series have negative values therefore infinite intermediates that cannot be converted to int during 'auto' lag
-        a=df.apply(lambda x: kpss(x.fillna(method='ffill'),nlags="legacy",regression='c')).T
-    except ValueError:
-            pass
-    a.columns = [f'{variable_name}_kpss_test_statistic',
-                 f'{variable_name}_kpss_p-value',
-                 f'{variable_name}_kpss_lags_used',
-                 'crit_vals']
-    crits = a['crit_vals'].apply(pd.Series)
-    crits.columns = [f'{variable_name}_kpss_10%_crit',
-                     f'{variable_name}_kpss_5%_crit',
-                     f'{variable_name}_kpss_2_5%_crit',
-                     f'{variable_name}_kpss_1%_crit']
-    d=pd.concat([a.drop(['crit_vals'], axis=1),crits],axis=1)
-    print(f'Completed tests for {variable_name}')
-    return d
+def kpss_test_ts_columns(df,variable_name,trend='constant'):
+      if trend =='constant':
+            try:
+            #Differenced time series have negative values 
+            # Negative values generate infinite intermediates 
+            # Infinite values cannot be converted to int with 'auto' lag
+              a=df.apply(lambda x: kpss(x.fillna(method='ffill'),nlags="legacy",regression='c')).T
+            except ValueError:
+              pass
+      else:
+            try:
+              a=df.apply(lambda x: kpss(x.fillna(method='ffill'),nlags="legacy",regression='ct')).T
+            except ValueError:
+              pass
+      a.columns = [f'{variable_name}_kpss_test_statistic',
+                  f'{variable_name}_kpss_p-value',
+                  f'{variable_name}_kpss_lags_used',
+                  f'crit_vals']
+      crits = a['crit_vals'].apply(pd.Series)
+      crits.columns = [f'{variable_name}_kpss_10%_crit',
+                      f'{variable_name}_kpss_5%_crit',
+                      f'{variable_name}_kpss_2_5%_crit',
+                      f'{variable_name}_kpss_1%_crit']
+      d=pd.concat([a.drop(['crit_vals'], axis=1),crits],axis=1)
+      print(f'Completed tests for {variable_name}')
+      return d
 
-def test_stationarity_for_dict_of_dfs(dict_name,test,category_name):
+def test_stationarity_for_dict_of_dfs(dict_name,test,category_name,trend='constant'):
   list_valid_tests = ['adf','kpss']
   if test not in list_valid_tests:
         raise ValueError('Valid tests for this function are "adf" and "kpss"')
@@ -83,7 +91,7 @@ def test_stationarity_for_dict_of_dfs(dict_name,test,category_name):
       if test=='adf':
           df=adf_test_ts_columns(test_df,variable_name=k)
       else:
-          df=kpss_test_ts_columns(test_df,variable_name=k)
+          df=kpss_test_ts_columns(test_df,variable_name=k,trend=trend)
     else:
       print(f'{k} not specified for {test}')
     list_df.append(df)
