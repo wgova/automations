@@ -3,6 +3,7 @@ import pandas as pd
 import statsmodels.api as sm
 from statsmodels.tsa.stattools import kpss
 from statsmodels.tsa.stattools import adfuller
+from data_processors import merge_df_list
 
 # normality test
 def shapiro_wilk_test(data, alpha=0.05):
@@ -69,7 +70,7 @@ def kpss_test_ts_columns(df,variable_name):
     print(f'Completed tests for {variable_name}')
     return d
 
-def test_stationarity_for_dict_of_dfs(dict_name,test):
+def test_stationarity_for_dict_of_dfs(dict_name,test,category_name):
   list_valid_tests = ['adf','kpss']
   if test not in list_valid_tests:
         raise ValueError('Valid tests for this function are "adf" and "kpss"')
@@ -87,7 +88,7 @@ def test_stationarity_for_dict_of_dfs(dict_name,test):
       print(f'{k} not specified for {test}')
     list_df.append(df)
   print(f'Output: len{list_df[0]}')
-  return list_df
+  return merge_df_list(list_df,category_name)
 # https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
 # https://towardsdatascience.com/6-ways-to-test-for-a-normal-distribution-which-one-to-use-9dcf47d8fa93
 # https://medium.com/@rrfd/testing-for-normality-applications-with-python-6bf06ed646a9
