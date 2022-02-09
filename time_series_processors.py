@@ -6,9 +6,9 @@ from functools import reduce
 
 #Group by names_category and reindex to the whole date range
 # Define helper function
-def add_missing_years(grp):
-    _ = grp.set_index('Year')
-    _ = _.reindex(list(range(2005,2019)))
+def add_missing_years(grp,datecolumn,min_date,max_date):
+    _ = grp.set_index(datecolumn)
+    _ = _.reindex(list(range(min_date,max_date)))
     del _['names_category']
     return _
 # Group by country name and extend
@@ -18,8 +18,8 @@ def add_missing_years(grp):
 # Interpolate for years between and extrapolate for years outside the range for 
 # which we have observations on a per-country basis
 # Define helper function
-def fill_missing(grp,fill_limit):
-    res = grp.set_index('Year')\
+def fill_missing(grp,datecolumn,fill_limit):
+    res = grp.set_index(datecolumn)\
     .interpolate(method='linear',limit=fill_limit)\
     .fillna(method='ffill')\
     .fillna(method='bfill')
@@ -124,7 +124,7 @@ def interpretable_tsfresh_features():
                  }
     return dict_features
 
-def detrend_ts_data(dframe):
+def detrend_ts_data(dframe,datecolumn,category,values):
     '''
     #TODO : make more dynamic
     input: pivot export data, indexed by year
@@ -134,23 +134,23 @@ def detrend_ts_data(dframe):
     x_diff = dframe.fillna(0)
     log_data = np.log(x_log)\
         .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='log_export_value')
+        .melt(id_vars=datecolumn,var_name = category,value_name=f'log_{values}')
     diff1_data = x_diff.diff(periods=1)\
         .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='diff1_export_value')
+        .melt(id_vars=datecolumn,var_name = category,value_name=f'diff1_{values}')
     diff2_data = x_diff.diff(periods=2)\
         .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='diff2_export_value')
+        .melt(id_vars=datecolumn,var_name = category,value_name=f'diff2_{values}')
     log_diff1_data = np.log(x_log).diff(periods=1)\
         .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='log_diff1_export_value')
+        .melt(id_vars=datecolumn,var_name = category,value_name=f'log_diff1_{values}')
     exports_data = dframe\
         .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='export_value')
+        .melt(id_vars=datecolumn,var_name = category,value_name=f'{values}')
     frames = [exports_data,diff1_data,diff2_data,log_data,log_diff1_data]
     transforms_merged = reduce(lambda  left,right: pd.merge(
-        left,right,on=['year','exporter'],how='outer'), frames)
-    transforms_merged = transforms_merged[transforms_merged['export_value'].notna()]
+        left,right,on=[datecolumn,category],how='outer'), frames)
+    transforms_merged = transforms_merged[transforms_merged['{values}'].notna()]
     transforms_merged.replace([np.inf, -np.inf], np.nan, inplace=True)
     transforms_merged=transforms_merged.fillna(0)
     return transforms_merged
