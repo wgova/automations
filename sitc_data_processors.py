@@ -93,7 +93,7 @@ def extract_ts_features(df,time_col, name_col,value_col,feature_calculator):
                      default_fc_parameters=feature_calculator)
     return features
 
-def extract_tsfresh_kats_features(df,countries:list,country_dict:dict,min_feats,path_to_data):
+def extract_tsfresh_kats_features(countries:list,country_dict:dict,min_feats,path_to_data):
     df_list = []
     size = range(len(countries))
     for c,country in zip(size,countries):#countries:
