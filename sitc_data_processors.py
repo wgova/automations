@@ -95,6 +95,15 @@ def extract_ts_features(df,time_col, name_col,value_col,feature_calculator):
                      default_fc_parameters=feature_calculator)
     return features
 
+def create_country_df_dictionaries(df):
+    countries = df.origin.unique()
+    country_dict = {elem : pd.DataFrame for elem in countries}
+    keys = country_dict.keys()
+    counter = tqdm(range(len(countries)),'Completed:')
+    for _,key in zip(counter,keys):
+      country_dict[key] = df[:][df.origin == key]
+    return country_dict
+
 def extract_tsfresh_kats_features(countries:list,country_dict:dict,min_feats,path_to_data):
     df_list = []
     size = range(len(countries))
