@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
 from functools import reduce
+import logging
+import warnings
+warnings.filterwarnings("ignore")
+from tqdm import tqdm
 
 import statsmodels.api as sm
 from statsmodels.tsa.stattools import kpss
@@ -9,13 +13,23 @@ from statsmodels.tsa.stattools import adfuller
 import tsfresh
 from tsfresh import extract_features, select_features
 from tsfresh import defaults
-from tsfresh.feature_extraction import feature_calculators
+from tsfresh.feature_extraction import settings,feature_calculators
 from tsfresh.feature_extraction.settings import ComprehensiveFCParameters
 from tsfresh.utilities import dataframe_functions, profiling
 from tsfresh.utilities.distribution import MapDistributor, MultiprocessingDistributor,DistributorBaseClass
 from tsfresh.utilities.string_manipulation import convert_to_output_format
 from tsfresh.feature_extraction.settings import EfficientFCParameters
 from tsfresh.utilities.dataframe_functions import roll_time_series
+from kats.tsfeatures.tsfeatures import TsFeatures,TimeSeriesData
+from kats.detectors.outlier import MultivariateAnomalyDetector, MultivariateAnomalyDetectorType
+from kats.models.var import VARParams
+from kats.detectors.cusum_detection import CUSUMDetector
+from kats.detectors.trend_mk import MKDetector
+from kats.consts import TimeSeriesData
+from kats.utils.simulator import Simulator
+from kats.tsfeatures.tsfeatures import TsFeatures
+from sklearn.preprocessing import StandardScaler
+from statsmodels.tsa.seasonal import STL
 import nolds #Hurst hypothesis
 
 def sitc_codes_to_sectors(df,sitc_code_column):
@@ -66,35 +80,6 @@ def country_name_changes(df,sitc_code_column):
     else:
         print("No country codes fixed")
 
-def detrend_ts_data(dframe):
-    '''
-    input: pivot export data, indexed by year
-    output: log transformed and differenced data sets
-    '''
-    x_log = dframe.fillna(1)
-    x_diff = dframe.fillna(0)
-    log_data = np.log(x_log)\
-        .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='log_export_value')
-    diff1_data = x_diff.diff(periods=1)\
-        .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='diff1_export_value')
-    diff2_data = x_diff.diff(periods=2)\
-        .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='diff2_export_value')
-    log_diff1_data = np.log(x_log).diff(periods=1)\
-        .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='log_diff1_export_value')
-    exports_data = dframe\
-        .reset_index()\
-        .melt(id_vars='year',var_name = 'exporter',value_name='export_value')
-    frames = [exports_data,diff1_data,diff2_data,log_data,log_diff1_data]
-    transforms_merged = reduce(lambda  left,right: pd.merge(
-        left,right,on=['year','exporter'],how='outer'), frames)
-    transforms_merged = transforms_merged[transforms_merged['export_value'].notna()]
-    transforms_merged=transforms_merged.replace([np.inf, -np.inf], np.nan, inplace=True)
-    transforms_merged=transforms_merged.fillna(0)
-    return transforms_merged
 
 def prefix_origin_to_sitc(df,country_code_column,sitc_column):
     df['exporter'] = df[[country_code_column,sitc_column]].apply(
@@ -108,4 +93,49 @@ def extract_ts_features(df,time_col, name_col,value_col,feature_calculator):
                      default_fc_parameters=feature_calculator)
     return features
 
+def extract_tsfresh_kats_features(df,countries:list,country_dict:dict,min_feats,path_to_data):
+    df_list = []
+    size = range(len(countries))
+    with tf.device('/device:GPU:0'):
+    for c,country in zip(size,countries):#countries:
+        display(f"{c} out of {len(countries)}: {100*(c/len(countries)):.0f}% completed")
+        target = f'{path_to_data}/features/{country}_features.csv'
+        file = pathlib.Path(target)
+        if file.exists():
+        print (f"Features for {country} already exist - feature extraction skipped")
+        else:
+        print (f"Feature extraction for {country} products in progress")
+        df = country_dict[country]
+        pivot = pd.pivot(df,index='year',columns='exporter',values='export_value')\
+        .reset_index()\
+        .fillna(0)
+        # Transform data to time series object
+        pivot.rename(columns={'year':'time','export_value':'value'},inplace=True)
+        pivot['time'] = pd.to_datetime(pivot.time,format='%Y')
+        ts_features = extract_ts_features(df,'year','exporter','export_value',min_feats)
+        cols = [col for col in pivot if col not in ['time']]#.iloc[:,1:].columns
+        list_ts = []
+        for i in tqdm(range(len(cols)),"Products completed:"):
+            data =  pivot[['time',cols[i]]]
+            ts = TimeSeriesData(data,date_format='%Y')
+            del data
+            # Initialise TSFeatures model object
+            model = TsFeatures(selected_features=['cusum_detector','hw_params','nowcasting',
+                                                'holt_params','seasonalities','trend_detector',
+                                                'statistics','trend_strength','stl_features'])
+            # Generate kats features
+            feat = model.transform(ts)
+            feat['exporter'] = cols[i]
+            list_ts.append(feat)
+            del ts
+        try:
+            features = pd.DataFrame(list_ts)
+            kat_features = features.set_index('exporter')
+            del features
+            all_feat = pd.concat(
+                [ts_features,kat_features],axis=0)
+            all_feat.to_csv(target)
+        except:
+            print('something wrong')
+        # df_list.append(all_feat)
   
