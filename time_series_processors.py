@@ -36,6 +36,7 @@ def fill_missing(grp,datecolumn,fill_limit):
 
 def create_date_features(df):
     df['month'] = df.date.dt.month
+    df['quarter'] = df['date'].dt.quarter
     df['day_of_month'] = df.date.dt.day
     df['day_of_year'] = df.date.dt.dayofyear
     df['week_of_year'] = df.date.dt.weekofyear
@@ -43,7 +44,11 @@ def create_date_features(df):
     df['year'] = df.date.dt.year
     df["is_wknd"] = df.date.dt.weekday // 4  
     df['is_month_start'] = df.date.dt.is_month_start.astype(int)  
-    df['is_month_end'] = df.date.dt.is_month_end.astype(int)   
+    df['is_month_end'] = df.date.dt.is_month_end.astype(int)
+    df['rolling_mean_7'] = df[target].shift(7).rolling(window=7).mean()
+    df['lag_7'] = df[target].shift(7)
+    df['lag_15']=df[target].shift(15)
+    df['lag_last_year']=df[target].shift(52).rolling(window=15).mean()   
     return df
 
 def interpretable_tsfresh_features():
