@@ -97,44 +97,44 @@ def extract_tsfresh_kats_features(df,countries:list,country_dict:dict,min_feats,
     df_list = []
     size = range(len(countries))
     for c,country in zip(size,countries):#countries:
-        display(f"{c} out of {len(countries)}: {100*(c/len(countries)):.0f}% completed")
         target = f'{path_to_data}/features/{country}_features.csv'
         file = pathlib.Path(target)
         if file.exists():
-        print (f"Features for {country} already exist - feature extraction skipped")
+            print (f"Features dataset for {country} already exist - feature extraction skipped")
         else:
-        print (f"Feature extraction for {country} products in progress")
-        df = country_dict[country]
-        pivot = pd.pivot(df,index='year',columns='exporter',values='export_value')\
-        .reset_index()\
-        .fillna(0)
-        # Transform data to time series object
-        pivot.rename(columns={'year':'time','export_value':'value'},inplace=True)
-        pivot['time'] = pd.to_datetime(pivot.time,format='%Y')
-        ts_features = extract_ts_features(df,'year','exporter','export_value',min_feats)
-        cols = [col for col in pivot if col not in ['time']]#.iloc[:,1:].columns
-        list_ts = []
-        for i in tqdm(range(len(cols)),"Products completed:"):
-            data =  pivot[['time',cols[i]]]
-            ts = TimeSeriesData(data,date_format='%Y')
-            del data
-            # Initialise TSFeatures model object
-            model = TsFeatures(selected_features=['cusum_detector','hw_params','nowcasting',
-                                                'holt_params','seasonalities','trend_detector',
-                                                'statistics','trend_strength','stl_features'])
-            # Generate kats features
-            feat = model.transform(ts)
-            feat['exporter'] = cols[i]
-            list_ts.append(feat)
-            del ts
-        try:
-            features = pd.DataFrame(list_ts)
-            kat_features = features.set_index('exporter')
-            del features
-            all_feat = pd.concat(
-                [ts_features,kat_features],axis=0)
-            all_feat.to_csv(target)
-        except:
-            print('something wrong')
-        # df_list.append(all_feat)
+            df = country_dict[country]
+            pivot = pd.pivot(df,index='year',columns='exporter',values='export_value')\
+            .reset_index()\
+            .fillna(0)
+            # Transform data to time series object
+            pivot.rename(columns={'year':'time','export_value':'value'},inplace=True)
+            pivot['time'] = pd.to_datetime(pivot.time,format='%Y')
+            ts_features = extract_ts_features(df,'year','exporter','export_value',min_feats)
+            cols = [col for col in pivot if col not in ['time']]#.iloc[:,1:].columns
+            list_ts = []
+            for i in tqdm(range(len(cols)),"Products completed:"):
+                data =  pivot[['time',cols[i]]]
+                ts = TimeSeriesData(data,date_format='%Y')
+                del data
+                # Initialise TSFeatures model object
+                model = TsFeatures(selected_features=['cusum_detector','hw_params','nowcasting',
+                                                    'holt_params','seasonalities','trend_detector',
+                                                    'statistics','trend_strength','stl_features'])
+                # Generate kats features
+                feat = model.transform(ts)
+                feat['exporter'] = cols[i]
+                list_ts.append(feat)
+                del ts
+            try:
+                features = pd.DataFrame(list_ts)
+                kat_features = features.set_index('exporter')
+                del features
+                all_feat = pd.concat(
+                    [ts_features,kat_features],axis=0)
+                all_feat.to_csv(target)
+                print (f"Feature extraction for {country} completed")
+                display(f"{c} out of {len(countries)}: {100*(c/len(countries)):.0f}/%\ completed")
+            except:
+                print('something wrong')
+            # df_list.append(all_feat)
   
