@@ -96,7 +96,6 @@ def extract_ts_features(df,time_col, name_col,value_col,feature_calculator):
 def extract_tsfresh_kats_features(df,countries:list,country_dict:dict,min_feats,path_to_data):
     df_list = []
     size = range(len(countries))
-    with tf.device('/device:GPU:0'):
     for c,country in zip(size,countries):#countries:
         display(f"{c} out of {len(countries)}: {100*(c/len(countries)):.0f}% completed")
         target = f'{path_to_data}/features/{country}_features.csv'
