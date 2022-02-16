@@ -7,7 +7,8 @@ warnings.filterwarnings("ignore")
 from tqdm import tqdm
 import re
 import pathlib
-from feature_selection import *
+from .feature_selection import *
+
 
 import statsmodels.api as sm
 from statsmodels.tsa.stattools import kpss
@@ -88,6 +89,13 @@ def prefix_origin_to_sitc(df,country_code_column,sitc_column):
     df['exporter'] = df[[country_code_column,sitc_column]].apply(
         func=(lambda row: '_'.join(row.values.astype(str))), axis=1)
     return df
+
+# def filter_features(features_df, features_to_find):
+#     feature_list = []
+#     for i in features_to_find:
+#         feature_cols = features_df.filter(regex=i, axis=1).columns.to_list()
+#         feature_list.extend(feature_cols)
+#     return feature_list
 
 def create_synth_ts():
     range = pd.date_range(start= 1960, periods=50,freq='A')
