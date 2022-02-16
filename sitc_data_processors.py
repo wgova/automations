@@ -7,6 +7,7 @@ warnings.filterwarnings("ignore")
 from tqdm import tqdm
 import re
 import pathlib
+from feature_selection import *
 
 import statsmodels.api as sm
 from statsmodels.tsa.stattools import kpss
@@ -97,7 +98,7 @@ def create_synth_ts():
     # data = data.set_index('year')
     return data
 
-def ts_features_dict(test_df,feature_keywords:list):
+def ts_features_dict(feature_keywords:list):
     test_df = create_synth_ts()
     all_features = ComprehensiveFCParameters()
     test_features = extract_ts_features(test_df,'year','exporter','export_value',all_features)  
