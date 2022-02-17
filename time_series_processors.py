@@ -155,7 +155,4 @@ def detrend_ts_data(dframe,datecolumn,category,values):
     frames = [exports_data,diff1_data,diff2_data,log_data,log_diff1_data]
     transforms_merged = reduce(lambda  left,right: pd.merge(
         left,right,on=[datecolumn,category],how='outer'), frames)
-    transforms_merged = transforms_merged[transforms_merged['{values}'].notna()]
-    transforms_merged.replace([np.inf, -np.inf], np.nan, inplace=True)
-    transforms_merged=transforms_merged.fillna(0)
     return transforms_merged
