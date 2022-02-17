@@ -83,7 +83,7 @@ def test_stationarity_for_dict_of_dfs(dict_name,test,category_name,trend='consta
   if test not in list_valid_tests:
         raise ValueError('Valid tests for this function are "adf" and "kpss"')
   list_df =[]
-  validated = ['values','log_export_value','diff1_export_value','log_diff1_export_value','diff2_export_value']
+  validated = ['values','log_values','diff1_values','log_diff1_values','diff2_values']
   for k,v in dict_name.items():
     print(f'Running tests for: {k}')
     if k in validated:
