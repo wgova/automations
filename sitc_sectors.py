@@ -33,15 +33,10 @@ def sitc_codes_to_sectors(df,sitc_code_column):
             df[sitc_code_column]<7000,
             df[sitc_code_column]<7940,
             df[sitc_code_column]<9000,
-            df[sitc_code_column]<9710,
-            df[sitc_code_column] == 'travel',
-            df[sitc_code_column] == 'transport', 
-            df[sitc_code_column] == 'ict', 
-            df[sitc_code_column] == 'financial']
+            df[sitc_code_column]<9710]
     choices = ['food_animals','beverages_tobacco','crude_materials_inedibles','mineral_fuels_lubricants',
     'animals_vegetable_oils','chemicals_products','manufactured_goods','machinery_and_transport',
-    'miscellaneous_manufactured_articles','commodities_and_other_transactions','travel',
-    'transport', 'ict', 'financial']
+    'miscellaneous_manufactured_articles','commodities_and_other_transactions']
     df['sectors'] = np.select(conditions,choices,default='unspecified')
     return df
 
