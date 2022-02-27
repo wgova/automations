@@ -9,14 +9,6 @@ import re
 import pathlib
 from .feature_selection import *
 
-
-import statsmodels.api as sm
-from statsmodels.tsa.stattools import kpss
-from statsmodels.tsa.stattools import adfuller
-from sklearn.preprocessing import StandardScaler
-from statsmodels.tsa.seasonal import STL
-import nolds #Hurst hypothesis
-
 def sitc_codes_to_sectors(df,sitc_code_column):
     '''
     Allocate sectors to SITC codes
