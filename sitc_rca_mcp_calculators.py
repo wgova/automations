@@ -3,6 +3,7 @@ from pyDataverse.api import NativeApi, DataAccessApi
 from pyDataverse.models import Dataverse
 import pandas as pd
 import os
+import tensorflow as tf
 from zipfile import ZipFile
 from urllib.request import urlretrieve
 from tempfile import mktemp
