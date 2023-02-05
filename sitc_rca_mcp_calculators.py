@@ -58,7 +58,7 @@ def calc_sitc_econ_complexity(self):
 
 def separate_joined_country_sitc_code(self,name='exporter'):
   self._obj = self[name].str.split("_",expand=True)
-  self["location_code"] , self["sitc_product_code"] = self._obj[0],loc_prod[1]
+  self["location_code"] , self["sitc_product_code"] = self._obj[0],self._obj[1]
   return self
 
 def calculate_rca_metrics(save_path,rca_name='sitc_rca_2020.csv',sitc_dta_path=None,df=None):
