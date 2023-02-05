@@ -56,14 +56,27 @@ def calc_sitc_econ_complexity(self):
   trade_cols = {'time':'year', 'loc':'location_code', 'prod':'sitc_product_code', 'val':'export_value'}
   return pd.concat([ecomplexity(self[self.year==t], trade_cols) for t in self.year.unique()])
 
-def calculate_rca_metrics(save_path,rca_name='sitc_rca_2020.csv',sitc_dta_path=None):
+def separate_joined_country_sitc_code(self,name='exporter'):
+  self._obj = self[name].str.split("_",expand=True)
+  self["location_code"] , self["sitc_product_code"] = self._obj[0],loc_prod[1]
+  return self
+
+def calculate_rca_metrics(save_path,rca_name='sitc_rca_2020.csv',sitc_dta_path=None,df=None):
   doi = 'doi:10.7910/DVN/H8SFD2'
   file_keywords = '4digit_year.dta'
   rca_path = os.path.join(save_path,rca_name)
-  if os.path.exists(rca_path):
+  # calculate from a dataframe
+  if df is not None:
+    with tf.device('/device:GPU:0'):
+      sitc_rca = separate_joined_country_sitc_code(df)\
+      .pipe(calc_sitc_econ_complexity)\
+      .dropna(subset=['rca'])
+  # load previously calculated values from path
+  elif os.path.exists(rca_path):
     print('Complexity metrics already calculated. \nLoading from disk')
     sitc_rca = pd.read_csv(rca_path,low_memory=False)\
     .dropna(subset=['rca'])
+  # calculate from a downloaded csv file
   else:
     print('Calculating complexity metrics')
     with tf.device('/device:GPU:0'):
